@@ -312,6 +312,7 @@ myStartupHook = do
     spawn "dunst -conf /home/stuart/.config/dunstrc &"
     -- spawn "picom &"
     spawnOnce "export DBUS_SESSION_BUS_ADDRESS=$(systemctl --user show-environment | grep DBUS_SESSION_BUS_ADDRESS | cut -d= -f 2-); /usr/bin/emacs --daemon &"
+    spawnOnce "dropbox start &"
     setWMName "LG3D"
 
 ------------------------------------------------------------------------

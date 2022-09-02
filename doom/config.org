@@ -425,7 +425,7 @@ STATUS: the status"
     (catch 'success
       (seq-doseq (link pdf-links)
         (let ((url (cdr (assoc 'URL link))))
-           (message (concat "Trying " url))
+           (message "%s" (concat "Trying " url))
           (if (display-pdf url fname) (throw 'success t))))
       (message "Unsuccessful"))
   (advice-remove 'url-http-handle-authentication #'ignore)))
@@ -444,7 +444,7 @@ STATUS: the status"
   "Open a doi link.
  URI: the uri"
   (interactive "sURI: ")
-  (message (concat "Opening link: " uri))
+  (message "%s" (concat "Opening link: " uri))
   (unless default-open-function (setq default-open-function #'browse-url-default-browser))
   (cond ((string-match doi-regex uri) (open-doi (match-string 0 uri) fname))
         ((string-match "[0-9]\\{4\\}\\.[0-9]\\{5\\}\\(v[0-9]+\\)*$" uri) (open-arxiv (match-string 0 uri) fname))

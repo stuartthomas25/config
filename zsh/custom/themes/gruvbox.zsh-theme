@@ -94,7 +94,7 @@ prompt_context() {
   case "$(hostname)" in
      Sarabi*)  OS_LOGO="🦁 " ;;
      roxie*)   OS_LOGO="🐧" ;;
-     millie*)   OS_LOGO="millie" ;;
+     millie*)   OS_LOGO="🧑" ;;
      *zaratan*)   OS_LOGO="🐢" ;;
   esac
   prompt_segment 237 7 $OS_LOGO

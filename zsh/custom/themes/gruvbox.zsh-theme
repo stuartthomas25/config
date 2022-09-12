@@ -91,9 +91,11 @@ prompt_context() {
   # if [[ "$USER" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
     # prompt_segment 237 7 "%(!.%{%F{3}%}.)%n@%m"
   # fi
-  case "$OSTYPE" in
-    darwin*)  OS_LOGO="🍎" ;; 
-     linux*)   OS_LOGO="🐧" ;;
+  case "$(hostname)" in
+     Sarabi*)  OS_LOGO="🦁 " ;;
+     roxie*)   OS_LOGO="🐧" ;;
+     millie*)   OS_LOGO="millie" ;;
+     *zaratan*)   OS_LOGO="🐢" ;;
   esac
   prompt_segment 237 7 $OS_LOGO
 }

@@ -157,7 +157,7 @@ ex ()
 
 conda_cd ()
 {
-    cd $1
+    eval "\cd $1"
     if [ -e .condaenv ] ; then
         conda activate $(cat .condaenv)
     fi

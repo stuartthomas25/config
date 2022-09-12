@@ -1,12 +1,10 @@
-:PROPERTIES:
-:header-args: :tangle ~/.zshrc
-:END:
 #+title: ZSH Config
+#+PROPERTY:  header-args   :tangle ~/.zshrc
 #+STARTUP: fold
 #+auto_tangle: t
 
 #+begin_src bash
-
+#test
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 #

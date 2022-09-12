@@ -1,7 +1,5 @@
-:PROPERTIES:
-:header-args: :tangle ~/.xmonad/xmonad.hs
-:END:
 #+title: XMonad Config
+#+PROPERTY:  header-args   :tangle ~/.xmonad/xmonad.hs
 #+STARTUP: fold
 #+auto_tangle: t
 

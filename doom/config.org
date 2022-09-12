@@ -1,7 +1,5 @@
-:PROPERTIES:
-:header-args: :tangle config.el
-:END:
 #+title: Config
+#+PROPERTY:  header-args   :tangle config.el
 #+STARTUP: fold
 #+auto_tangle: t
 ---

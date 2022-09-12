@@ -1,19 +1,5 @@
-:PROPERTIES:
-:header-args: :tangle config.el
-:END:
-#+title: Config
-#+STARTUP: fold
-#+auto_tangle: t
----
-* Personal
-Some functionality uses this to identify you, e.g. GPG configuration, email clients, file templates and snippets.
-#+BEGIN_SRC emacs-lisp
 (setq user-full-name "Stuart Nathan Thomas"
       user-mail-address "snthomas@umd.edu")
-#+END_SRC
-
-* Themes and Fonts
-#+BEGIN_SRC emacs-lisp
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:
@@ -47,10 +33,7 @@ Some functionality uses this to identify you, e.g. GPG configuration, email clie
 
 (global-hide-mode-line-mode 'toggle)
 (map! :leader :desc "Toggle Doom Mode Line" :g "d" (lambda () (interactive) (global-hide-mode-line-mode 'toggle)))
-#+END_SRC
 
-** PDF themes
-#+BEGIN_SRC emacs-lisp
 (defun update-pdf-colors ()
   (interactive)
   (setq pdf-view-midnight-colors
@@ -65,23 +48,13 @@ Some functionality uses this to identify you, e.g. GPG configuration, email clie
 
 (add-hook 'doom-load-theme-hook 'update-pdf-colors 100) ;; depth=100 ensure last
 
-
-#+END_SRC
-
-* Editor
-Enter to insert new line in normal mode
-#+begin_src emacs-lisp
 ;; (map! :n "RET" #'(lambda () (interactive) (evil-open-below 1) (evil-force-normal-state)))
 ;; (map! :n "S-RET" #'(lambda () (interactive) (evil-open-above 1) (evil-force-normal-state)))
 
 ;; (map! (:when (not buffer-read-only)
 ;;  :n "RET" #'(lambda () (interactive) (evil-open-below 1) (evil-force-normal-state))
 ;;  :n "S-RET" #'(lambda () (interactive) (evil-open-above 1) (evil-force-normal-state))))
-#+end_src
 
-
-This determines the style of line numbers in effect. If set to `nil', line numbers are disabled. For relative line numbers, set this to `relative'.
-#+begin_src emacs-lisp
 (setq display-line-numbers-type 'visual)
 (setq doom-inhibit-large-file-detection t)
 
@@ -102,10 +75,6 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 (map! :leader :desc "Next Tab" :g "l" #'+workspace/switch-right)
 (map! :leader :desc "Previous Tab" :g "L" #'+workspace/switch-left)
 
-#+end_src
-
-** Ligatures
-#+begin_src emacs-lisp
 ;; Enable the www ligature in every possible major mode
 (set-ligatures! 't '("www"))
 
@@ -120,19 +89,12 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
                                      "<*>" "<|" "<|>" "<$" "<$>" "<!--" "<-" "<--" "<->" "<+"
                                      "<+>" "<=" "<==" "<=>" "<=<" "<>" "<<" "<<-" "<<=" "<<<"
                                      "<~" "<~~" "</" "</>" "~@" "~-" "~>" "~~" "~~>" "%%"))
-#+end_src
 
-
-* Custom Keyboard Maps
-#+BEGIN_SRC emacs-lisp
 (map! :leader :desc "Open Terminal" :g "j" #'multi-term)
 (map! :leader :desc "Open eshell" :g "e" 'eshell)
 (global-unset-key [remap delete-frame])
 (map! :leader :desc "Close Frame" :r "q f" #'delete-frame)
-#+END_SRC
 
-* Org
-#+BEGIN_SRC emacs-lisp
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
@@ -149,6 +111,7 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
   (interactive)
   (org-latex-preview '(16)))
 (map! (:map org-mode-map :localleader :desc "Preview LaTeX in buffer" "L" #'org-latex-preview-buffer))
+(map! (:map org-mode-map :localleader :desc "Preview LaTeX at point" "j" #'org-latex-preview))
 
 (use-package! org-auto-tangle
   :defer t
@@ -158,74 +121,59 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 (add-hook 'org-mode-hook #'org-modern-mode)
 (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
 (add-hook 'org-mode-hook #'org-inline-pdf-mode)
-#+END_SRC
 
-** Babel
-#+begin_src elisp
 (setq org-babel-julia-command "julia --sysimage ~/.julia/sysimages/sys_itensors.so")
 
-
-#+end_src
-
-
-* Dashboard
-#+BEGIN_SRC emacs-lisp
-  (defun my/dashboard-insert-calendar (list-size)
-    (mu4e-update-mail-and-index)
-    (dashboard-insert-section
-     "Mail"
-     '(1 2 3 4 5)
-     5
-     'custom
-     "c"
-     (lambda (&rest _) nil)))
+(defun my/dashboard-insert-calendar (list-size)
+  (mu4e-update-mail-and-index)
+  (dashboard-insert-section
+   "Mail"
+   '(1 2 3 4 5)
+   5
+   'custom
+   "c"
+   (lambda (&rest _) nil)))
 
 
-  (use-package! dashboard
-    :init      ;; tweak dashboard config before loading it
-    (setq dashboard-set-heading-icons t)
-    (setq dashboard-set-file-icons t)
-    ;; (setq dashboard-banner-logo-title "\nKEYBINDINGS:\nOpen dired file manager  (SPC .)\nOpen buffer list         (SPC b i)\nFind recent files        (SPC f r)\nOpen the eshell          (SPC e s)\nToggle big font mode     (SPC t b)")
-    ;;(setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
-    (setq dashboard-item-names '(("Recent Files:" . "Recently opened files:")
-			     ("Agenda:" . "Things to do:")
-			     ("Projects:" . "Recent Projects:")))
-    (setq dashboard-startup-banner (concat doom-private-dir "doom-emacs-dash.png"))  ;; use custom image as banner
-    (setq dashboard-banner-logo-title nil)
+(use-package! dashboard
+  :init      ;; tweak dashboard config before loading it
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  ;; (setq dashboard-banner-logo-title "\nKEYBINDINGS:\nOpen dired file manager  (SPC .)\nOpen buffer list         (SPC b i)\nFind recent files        (SPC f r)\nOpen the eshell          (SPC e s)\nToggle big font mode     (SPC t b)")
+  ;;(setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
+  (setq dashboard-item-names '(("Recent Files:" . "Recently opened files:")
+			   ("Agenda:" . "Things to do:")
+			   ("Projects:" . "Recent Projects:")))
+  (setq dashboard-startup-banner (concat doom-private-dir "doom-emacs-dash.png"))  ;; use custom image as banner
+  (setq dashboard-banner-logo-title nil)
 
-    (setq dashboard-center-content t) ;; set to 't' for centered content
-    (setq dashboard-items
-          '((recents . 5)
-			  (agenda . 15 )
-			  (projects . 5)))
-     ;;       (custom . 5)))
+  (setq dashboard-center-content t) ;; set to 't' for centered content
+  (setq dashboard-items
+        '(
+          (recents . 5)
+			(agenda . 15 )
+			(projects . 5)))
+   ;;       (custom . 5)))
 
-    (setq dashboard-agenda-time-string-format "%a, %b %d")
-    (setq dashboard-agenda-time-string-format "%a, %b %d")
-    (setq dashboard-agenda-prefix-format "(%(projectile-project-name)) %i %-12:c %s ")
-    (setq dashboard-agenda-sort-strategy '(time-up todo-state-up))
-    :config
-    (add-to-list 'dashboard-item-generators  '(custom . my/dashboard-insert-calendar))
-    (dashboard-setup-startup-hook)
-    (setq dashboard-set-footer nil)
-    (setq dashboard-force-refresh t)
-    (setq dashboard-set-init-info nil)
-    (setq dashboard-filter-agenda-entry 'dashboard-filter-agenda-by-todo)
-    ;(add-hook 'dashboard-mode-hook #'dashboard-refresh-buffer)
-    (dashboard-modify-heading-icons '((recents . "file-text")
-				    (bookmarks . "book")))
-    (push (lambda (f)
-	  (with-selected-frame  f (dashboard-refresh-buffer)))
-	after-make-frame-functions)
-    (setq doom-fallback-buffer-name "*dashboard*"))
+  (setq dashboard-agenda-time-string-format "%a, %b %d")
+  (setq dashboard-agenda-time-string-format "%a, %b %d")
+  (setq dashboard-agenda-prefix-format "(%(projectile-project-name)) %i %-12:c %s ")
+  (setq dashboard-agenda-sort-strategy '(time-up todo-state-up))
+  :config
+  (add-to-list 'dashboard-item-generators  '(custom . my/dashboard-insert-calendar))
+  (dashboard-setup-startup-hook)
+  (setq dashboard-set-footer nil)
+  (setq dashboard-force-refresh t)
+  (setq dashboard-set-init-info nil)
+  (setq dashboard-filter-agenda-entry 'dashboard-filter-agenda-by-todo)
+  ;(add-hook 'dashboard-mode-hook #'dashboard-refresh-buffer)
+  (dashboard-modify-heading-icons '((recents . "file-text")
+				  (bookmarks . "book")))
+  (push (lambda (f)
+	(with-selected-frame  f (dashboard-refresh-buffer)))
+      after-make-frame-functions)
+  (setq doom-fallback-buffer-name "*dashboard*"))
 
-#+END_SRC
-
-#+RESULTS:
-: t
-
-* Mu4e
-#+BEGIN_SRC emacs-lisp
 (after! mu4e
   (set-email-account!
    "umd"
@@ -237,12 +185,12 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 
   (setq org-msg-signature "
 
-,#+begin_signature
+#+begin_signature
 Best wishes, \\\\
 Stuart Thomas (he/him) \\\\
 snthomas@umd.edu \\\\
 +1 (407) 701-7788
-,#+end_signature")
+#+end_signature")
 
 
   (setq mu4e-get-mail-command "mbsync umd"
@@ -300,14 +248,8 @@ snthomas@umd.edu \\\\
   (add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
   (mu4e-update-mail-and-index t))
 
-#+END_SRC
+(require 'mu4e)
 
-
-#+RESULTS:
-| my-mu4e-set-account | +mu4e-set-from-address-h | evil-collection-mu4e-org-set-header-to-insert-mode |
-
-* LaTeX
-#+BEGIN_SRC emacs-lisp
 (after! projectile
         (add-to-list 'projectile-other-file-alist '("tex" "pdf"))
         (add-to-list 'projectile-other-file-alist '("pdf" "tex")))
@@ -328,7 +270,6 @@ snthomas@umd.edu \\\\
                 (if (eq (point) (line-end-position))
                         (evil-backward-char 7)
                         (evil-backward-char 8))))
-
 (use-package! org-latex-impatient
   :defer t
   :hook (org-mode . org-latex-impatient-mode)
@@ -339,10 +280,9 @@ snthomas@umd.edu \\\\
 
 (setq LaTeX-default-environment "equation")
 (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
-#+END_SRC
 
-** BibTeX
-#+BEGIN_SRC emacs-lisp
+(after! tex
+    (push '(output-pdf "PDF Tools") TeX-view-program-selection))
 
 (setq bibtex-completion-pdf-field "File")
 
@@ -368,10 +308,6 @@ snthomas@umd.edu \\\\
 (setq bibtex-autokey-year-length 4)
 (setq biblio-bibtex-use-autokey t)
 
-#+END_SRC
-
-* DOI System
-#+BEGIN_SRC emacs-lisp
 (defconst doi-regex "10\\.[0-9]\\{4,5\\}\\/[^;, ]+")
 
 (defun my/doi-to-reference ()
@@ -416,7 +352,7 @@ STATUS: the status"
     (catch 'success
       (seq-doseq (link pdf-links)
         (let ((url (cdr (assoc 'URL link))))
-           (message (concat "Trying " url))
+           (message "%s" (concat "Trying " url))
           (if (display-pdf url fname) (throw 'success t))))
       (message "Unsuccessful"))
   (advice-remove 'url-http-handle-authentication #'ignore)))
@@ -435,7 +371,7 @@ STATUS: the status"
   "Open a doi link.
  URI: the uri"
   (interactive "sURI: ")
-  (message (concat "Opening link: " uri))
+  (message "%s" (concat "Opening link: " uri))
   (unless default-open-function (setq default-open-function #'browse-url-default-browser))
   (cond ((string-match doi-regex uri) (open-doi (match-string 0 uri) fname))
         ((string-match "[0-9]\\{4\\}\\.[0-9]\\{5\\}\\(v[0-9]+\\)*$" uri) (open-arxiv (match-string 0 uri) fname))
@@ -447,11 +383,7 @@ STATUS: the status"
 (url-handler-mode 1)
 
 (setq browse-url-browser-function #'open-link)
-#+END_SRC
 
-
-* Command Line
-#+BEGIN_SRC emacs-lisp
 (setq conda-env-home-directory "/opt/miniforge3")
 (setq conda-anaconda-home "/opt/miniforge3")
 
@@ -471,10 +403,6 @@ apps are not started from a shell."
 
 (set-exec-path-from-shell-PATH)
 
-#+END_SRC
-
-** Julia REPL
-#+BEGIN_SRC emacs-lisp
 ;; https://emacs.stackexchange.com/questions/18775/how-to-get-a-fully-functional-julia-repl-in-emacs
 (defun my/julia-repl ()
   "Runs Julia in a screen session in a `term' buffer."
@@ -531,19 +459,9 @@ apps are not started from a shell."
 ;; (setq window-buffer-change-functions '(my/ob-julia-callback doom-run-switch-buffer-hooks-h))
 ;;
 
-#+END_SRC
-
-* Flyspell
-#+BEGIN_SRC emacs-lisp
 (after! flycheck
         (setq flycheck-check-syntax-automatically (delq 'idle-change flycheck-check-syntax-automatically))) ;; this conflicts with tramp
-#+END_SRC
 
-#+RESULTS:
-| TeX-revert-document-buffer |
-
-* ElFeed
-#+BEGIN_SRC emacs-lisp
 (setq rmh-elfeed-org-files '("~/org/elfeed.org"))
 (add-hook! 'elfeed-search-mode-hook 'elfeed-update)
 (after! elfeed
@@ -555,6 +473,3 @@ apps are not started from a shell."
 ;;   (interactive)
 ;;   (open-link link nil oldbrowse))
 ;; (advice-add 'browse-url :around 'my/link-advice)
-#+END_SRC
-
-* Footnotes

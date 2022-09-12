@@ -21,7 +21,8 @@
  '(rustic-ansi-faces
    ["#fbf1c7" "#9d0006" "#79740e" "#b57614" "#076678" "#b16286" "#427b58" "#282828"])
  '(safe-local-variable-values
-   '((eval conda-env-activate-path "~/.conda/envs/rscience")
+   '((TeX-command-extra-options . "-shell-escape")
+     (eval conda-env-activate-path "~/.conda/envs/rscience")
      (eval set-input-method 'TeX)))
  '(vc-annotate-background "#fbf1c7")
  '(vc-annotate-color-map

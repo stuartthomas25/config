@@ -137,6 +137,7 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
 (add-hook 'org-mode-hook 'org-indent-mode)
+(add-hook 'org-mode-hook 'org-hide-block-all)
 
 (after! org
         (setq org-startup-indented t)

@@ -16,7 +16,7 @@ if [ $TERM = "dumb" ]; then
 fi
 
 # Path to your oh-my-zsh installation.
-export ZSH=".oh-my-zsh"
+export ZSH="$HOME/.config/oh-my-zsh"
 export EDITOR="emacsclient -c"
 
 # Set name of the theme to load --- if set to "random", it will

@@ -16,7 +16,8 @@ if [ $TERM = "dumb" ]; then
 fi
 
 # Path to your oh-my-zsh installation.
-export ZSH="$HOME/.config/oh-my-zsh"
+export CONFIG="$HOME/.config/"
+export ZSH="$CONFIG/oh-my-zsh"
 export EDITOR="emacsclient -c"
 
 # Set name of the theme to load --- if set to "random", it will
@@ -80,7 +81,7 @@ SOLARIZED_THEME="dark"
 HIST_STAMPS="mm/dd/yyyy"
 
 # Would you like to use another custom folder than $ZSH/custom?
-# ZSH_CUSTOM=/path/to/new-custom-folder
+ZSH_CUSTOM="$CONFIG/zsh/custom"
 
 # Which plugins would you like to load?
 # Standard plugins can be found in $ZSH/plugins/

@@ -179,7 +179,7 @@ case $(hostname) in
         else
             export CONDAROOT='/opt/miniconda3'
         fi ;;
-    *)     export CONDAROOT="$HOME/miniconda3"
+    ,*)     export CONDAROOT="$HOME/miniconda3"
 esac
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
@@ -196,9 +196,14 @@ else
 fi
 unset __conda_setup
 # <<< conda initialize <<<
+#+end_src
 
-if [[ "$TERM" == 'xterm-256color' ]]; then
-    test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+ITerm integration
+#+begin_src bash
+if [[ "$TERM" == 'xterm-256color' && -e "${HOME}/.iterm2_shell_integration.zsh" ]]; then
+    test  && source "${HOME}/.iterm2_shell_integration.zsh"
     export ITERM2_SQUELCH_MARK=1
 fi
 #+end_src
+
+#+RESULTS:

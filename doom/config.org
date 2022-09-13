@@ -565,4 +565,9 @@ apps are not started from a shell."
 ;; (advice-add 'browse-url :around 'my/link-advice)
 #+END_SRC
 
-* Footnotes
+* Projectile
+#+begin_src emacs-lisp
+(after! projectile
+  (setq projectile-indexing-method 'alien)
+  (setq projectile-enable-caching nil))
+#+end_src

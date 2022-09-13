@@ -1,0 +1,94 @@
+#+title: VimRC
+#+PROPERTY:  header-args   :tangle ~/.vimrc
+#+STARTUP: fold
+#+auto_tangle: t
+
+#+begin_src vimrc
+set number relativenumber
+set nu rnu
+
+
+set clipboard+=unnamed
+
+" Basic stuff
+let mapleader = ","
+
+command! W execute 'w !sudo tee % > /dev/null' <bar> edit!
+
+set foldmethod=indent
+
+let g:vimtex_fold_enabled=1
+
+set backspace=eol,start,indent
+set whichwrap+=<,>,h,l
+set lazyredraw
+if has("gui_macvim")
+    autocmd GUIEnter * set vb t_vb=
+endif
+syntax enable
+set wildmenu
+set expandtab
+set smarttab
+set shiftwidth=4
+set tabstop=4
+set ai "Auto indent
+set si "Smart indent
+set wrap "Wrap lines
+map <silent> <leader><cr> :noh<cr>
+set display=lastline
+set guioptions-=r
+set guioptions-=R
+set guioptions-=l
+set guioptions-=L
+map <leader>e :vsplit $MYVIMRC<CR>
+map <leader>s :so $MYVIMRC<CR>
+set shortmess=I
+set cursorline
+
+
+" Delete trailing white space on save, useful for some filetypes ;)
+fun! CleanExtraSpaces()
+    let save_cursor = getpos(".")
+    let old_query = getreg('/')
+    silent! %s/\s\+$//e
+    call setpos('.', save_cursor)
+    call setreg('/', old_query)
+endfun
+
+"Plugins
+call plug#begin('~/.vim/plugged')
+  Plug 'kjwon15/vim-transparent'
+  Plug 'scrooloose/nerdcommenter'
+  Plug 'morhetz/gruvbox'
+  Plug 'dylanaraps/wal.vim'
+call plug#end()
+
+nnoremap <leader>n :NERDTreeToggleVCS<CR>
+
+colorscheme gruvbox
+set background=dark
+
+
+set makeprg=make
+
+set autowrite
+
+set tw=0
+
+nnoremap <C-h> <C-W>h
+nnoremap <C-j> <C-W>j
+nnoremap <C-k> <C-W>k
+nnoremap <C-l> <C-W>l
+
+
+nnoremap <CR> o<Esc>
+nnoremap <S-CR> O<Esc>j
+inoremap <S-Tab> <C-V><Tab>
+
+
+if has("autocmd")
+    "autocmd FileType netrw edit main.tex
+    autocmd FileType tex set spell
+endif
+
+#+end_src

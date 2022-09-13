@@ -237,7 +237,7 @@ prompt_virtualenv() {
       if ! [[ $(basename $CONDA_PREFIX) == "miniconda3" ]]; then
         # For no environment, hide "(base)"
         # For all environments that aren't (base)
-        prompt_segment 3 0 "(yabadabadoo $(basename $CONDA_PREFIX)) "
+        prompt_segment 3 0 "($(basename $CONDA_PREFIX)) "
       fi
   # When no conda environment is active, don't show anything
   else

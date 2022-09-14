@@ -188,7 +188,7 @@ config() (
     cd $CONFIG
     if [ $1 = 'update' ]; then
         modifiedfiles=$(git ls-files --modified)
-        if [ $modifiedfiles != "" ]; then
+        if [[ $modifiedfiles != "" ]]; then
             echo $modifiedfiles | xargs git add
             git commit
         fi

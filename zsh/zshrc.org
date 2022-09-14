@@ -172,10 +172,14 @@ cd . # so ^ runs on new tab
 
 export PATH=$HOME/bin:$HOME/.emacs.d/bin:$PATH
 
-git fetch > /dev/null 2>&1
-if [[ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]]; then
-    echo "Config updates available!"
-fi
+
+checkupdates() {
+    git fetch > /dev/null 2>&1
+    if [[ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]]; then
+        echo "Config updates available!"
+    fi
+}
+(cd $CONFIG && checkupdates)
 
 #+end_src
 

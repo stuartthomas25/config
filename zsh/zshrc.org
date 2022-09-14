@@ -194,7 +194,7 @@ config() (
         fi
         git pull
         git push
-        eval "./init"
+        eval "./init.sh"
     else
         eval "git $@"
     fi

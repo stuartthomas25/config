@@ -172,7 +172,10 @@ cd . # so ^ runs on new tab
 
 export PATH=$HOME/bin:$HOME/.emacs.d/bin:$PATH
 
+#+end_src
 
+* Config things
+#+begin_src bash
 checkupdates() {
     git fetch > /dev/null 2>&1
     if [[ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]]; then
@@ -180,6 +183,24 @@ checkupdates() {
     fi
 }
 (cd $CONFIG && checkupdates)
+
+config() (
+    cd $CONFIG
+    if [ $1 = 'update' ]; then
+        modifiedfiles=$(git ls-files --modified)
+        if [ $modifiedfiles != "" ]; then
+            echo $modifiedfiles | xargs git add
+            git commit
+        fi
+        git pull
+        git push
+        eval "./init"
+    else
+        eval "git $@"
+    fi
+)
+
+
 
 #+end_src
 

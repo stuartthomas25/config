@@ -170,15 +170,21 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 
 * Dashboard
 #+BEGIN_SRC emacs-lisp
-  (defun my/dashboard-insert-calendar (list-size)
-    (mu4e-update-mail-and-index)
+(defun my/dashboard-insert-mail (list-size)
+  ;;(mu4e-update-mail-and-index)
+  (let ((data (with-temp-buffer
+    (start-process "mu" (current-buffer) "/usr/bin/mu" "find" "flag:unread" "--format=sexp")
+    (buffer-string))))
+
     (dashboard-insert-section
-     "Mail"
-     '(1 2 3 4 5)
-     5
-     'custom
-     "c"
-     (lambda (&rest _) nil)))
+        "Mail"
+        '("0|hello" "1|goodbye" "2|hi")
+        3
+        'custom
+        "c"
+        (lambda (&rest _) nil))))
+
+
 
 
   (use-package! dashboard
@@ -188,8 +194,8 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
     ;; (setq dashboard-banner-logo-title "\nKEYBINDINGS:\nOpen dired file manager  (SPC .)\nOpen buffer list         (SPC b i)\nFind recent files        (SPC f r)\nOpen the eshell          (SPC e s)\nToggle big font mode     (SPC t b)")
     ;;(setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
     (setq dashboard-item-names '(("Recent Files:" . "Recently opened files:")
-			     ("Agenda:" . "Things to do:")
-			     ("Projects:" . "Recent Projects:")))
+			         ("Agenda:" . "Things to do:")
+			         ("Projects:" . "Recent Projects:")))
     (setq dashboard-startup-banner (concat doom-private-dir "doom-emacs-dash.png"))  ;; use custom image as banner
     (setq dashboard-banner-logo-title nil)
 
@@ -197,27 +203,27 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
     (setq dashboard-items
           '(
             (recents . 5)
-			  (agenda . 15 )
-			  (projects . 5)))
-     ;;       (custom . 5)))
+	    (agenda . 15 )
+	    (projects . 5)
+            (mail . 5)))
 
     (setq dashboard-agenda-time-string-format "%a, %b %d")
     (setq dashboard-agenda-time-string-format "%a, %b %d")
     (setq dashboard-agenda-prefix-format "(%(projectile-project-name)) %i %-12:c %s ")
     (setq dashboard-agenda-sort-strategy '(time-up todo-state-up))
     :config
-    (add-to-list 'dashboard-item-generators  '(custom . my/dashboard-insert-calendar))
+    (add-to-list 'dashboard-item-generators  '(mail . my/dashboard-insert-mail))
     (dashboard-setup-startup-hook)
     (setq dashboard-set-footer nil)
     (setq dashboard-force-refresh t)
     (setq dashboard-set-init-info nil)
     (setq dashboard-filter-agenda-entry 'dashboard-filter-agenda-by-todo)
-    ;(add-hook 'dashboard-mode-hook #'dashboard-refresh-buffer)
+                                        ;(add-hook 'dashboard-mode-hook #'dashboard-refresh-buffer)
     (dashboard-modify-heading-icons '((recents . "file-text")
-				    (bookmarks . "book")))
+				      (bookmarks . "book")))
     (push (lambda (f)
-	  (with-selected-frame  f (dashboard-refresh-buffer)))
-	after-make-frame-functions)
+	    (with-selected-frame  f (dashboard-refresh-buffer)))
+	  after-make-frame-functions)
     (setq doom-fallback-buffer-name "*dashboard*"))
 
 #+END_SRC
@@ -456,8 +462,6 @@ STATUS: the status"
 
 (setq browse-url-browser-function #'open-link)
 #+END_SRC
-
-
 * Command Line
 #+BEGIN_SRC emacs-lisp
 (setq conda-env-home-directory "/opt/miniforge3")

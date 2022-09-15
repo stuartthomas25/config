@@ -242,3 +242,13 @@ fi
 
 
 #+RESULTS:
+
+* Slurm tools
+#+begin_src bash
+alias wsq="watch \"squeue -u $USER -o '%.8i %.5P %.20j %.10u %.2t %.11L %.10M %.2D %.2C %R'\""
+alias sq="squeue -u $USER -o '%.8i %.5P %.20j %.10u %.2t %.11L %.10M %.2D %.2C %R'"
+function catlatest () {
+    echo "Log File: $(ls -rt $1 | tail -n 1)"
+    cat "$1$(ls -rt $1 | tail -n 1)"
+}
+#+end_src

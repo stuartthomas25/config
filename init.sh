@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 git submodule update --init --recursive
 # find $CONFIG -name "*.org" -exec emacs -q --batch --eval "(require 'org)" --eval '(org-babel-tangle-file "{}")' \;
 

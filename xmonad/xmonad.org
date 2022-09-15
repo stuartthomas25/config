@@ -93,7 +93,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     [ ((modm .|. shiftMask, xK_Return), spawn $ XMonad.terminal conf)
 
     -- launch dmenu
-    , ((modm              , xK_space ), spawn "dmenu_run -sb \"#fe8019\" -i")
+    , ((modm              , xK_space ), spawn "dmenu_run_history -sb \"#fe8019\" -i")
 
     , ((modm .|. mod1Mask , xK_equal), spawn "alacritty")
     , ((modm .|. mod1Mask , xK_minus), spawn "emacsclient -c -e '(dashboard-mode)'")

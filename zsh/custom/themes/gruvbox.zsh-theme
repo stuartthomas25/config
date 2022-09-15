@@ -234,7 +234,7 @@ prompt_status() {
 # Determines prompt modifier if and when a conda environment is active
 prompt_virtualenv() {
   if [[ -n $CONDA_PREFIX ]]; then
-      if ! [[ $(basename $CONDA_PREFIX) == "miniconda3" ]]; then
+      if ! [[ $(basename $CONDA_PREFIX) == "miniconda3" || $(basename $CONDA_PREFIX) == "miniforge3" ]]; then
         # For no environment, hide "(base)"
         # For all environments that aren't (base)
         prompt_segment 3 0 "($(basename $CONDA_PREFIX)) "

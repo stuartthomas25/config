@@ -125,6 +125,7 @@ else
     alias e='emacsclient -c'
 fi
 
+alias logout='exit'
 alias rm='trash'
 alias mv='mv -i'
 alias ..='cd ..'

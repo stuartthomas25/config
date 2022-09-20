@@ -113,6 +113,9 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     , ((modm .|. shiftMask, xK_s     ), spawn "sleep 1; xset dpms force off")
 
+    -- toggl light/dark mode
+    , ((modm              , xK_g     ), spawn "~/bin/togglcolor")
+
     -- close focused window
     , ((modm              , xK_q     ), kill)
 

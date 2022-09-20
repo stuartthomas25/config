@@ -33,8 +33,7 @@ Some functionality uses this to identify you, e.g. GPG configuration, email clie
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-gruvbox)
-
+(setq doom-theme (if (file-exists-p "~/.light") 'doom-gruvbox-light 'doom-gruvbox))
 
 ;; (use-package! doom-ewal-themes)
 

@@ -15,7 +15,7 @@
  '(jdee-db-spec-breakpoint-face-colors (cons "#f0f0f0" "#928374"))
  '(objed-cursor-color "#9d0006")
  '(org-agenda-files
-   '("/home/stuart/Projects/open-system-dissipation/personal-notes.org" "/home/stuart/org/todo.org" "/home/stuart/org/jay-notes.org"))
+   '("~/Projects/time-crystals/daily-notes.org" "/home/stuart/Projects/open-system-dissipation/personal-notes.org" "/home/stuart/org/todo.org" "/home/stuart/org/jay-notes.org"))
  '(package-selected-packages '(zotero ein))
  '(pdf-misc-print-program-executable "/opt/homebrew/bin/gpr")
  '(rustic-ansi-faces

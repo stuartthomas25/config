@@ -119,7 +119,6 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
                                      "<~" "<~~" "</" "</>" "~@" "~-" "~>" "~~" "~~>" "%%"))
 #+end_src
 
-
 * Custom Keyboard Maps
 #+BEGIN_SRC emacs-lisp
 (map! :leader :desc "Open Terminal" :g "j" #'multi-term)
@@ -165,7 +164,6 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 
 
 #+end_src
-
 
 * Dashboard
 #+BEGIN_SRC emacs-lisp

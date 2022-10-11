@@ -125,6 +125,9 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 (map! :leader :desc "Open eshell" :g "e" 'eshell)
 (global-unset-key [remap delete-frame])
 (map! :leader :desc "Close Frame" :r "q f" #'delete-frame)
+
+(map! :desc "Next buffer" :g "<mouse-9>" #'next-buffer)
+(map! :desc "Next buffer" :g "<mouse-8>" #'previous-buffer)
 #+END_SRC
 
 * Org

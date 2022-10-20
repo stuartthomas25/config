@@ -10,6 +10,12 @@ Some functionality uses this to identify you, e.g. GPG configuration, email clie
       user-mail-address "snthomas@umd.edu")
 #+END_SRC
 
+* General
+#+begin_src emacs-lisp
+(when (not (string-equal system-type "darwin"))
+    (disable-packages! macos))
+#+end_src
+
 * Themes and Fonts
 #+BEGIN_SRC emacs-lisp
 
@@ -54,7 +60,7 @@ Some functionality uses this to identify you, e.g. GPG configuration, email clie
         (cons (face-attribute 'default :foreground) (face-attribute 'default :background))))
 
 
-(add-hook 'pdf-view-mode-hook 'pdf-view-midnight-minor-mode)
+;; (add-hook 'pdf-view-mode-hook 'pdf-view-midnight-minor-mode)
 
 (after! pdf-tools (update-pdf-colors))
 

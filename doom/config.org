@@ -12,8 +12,8 @@ Some functionality uses this to identify you, e.g. GPG configuration, email clie
 
 * General
 #+begin_src emacs-lisp
-(when (not (string-equal system-type "darwin"))
-    (disable-packages! macos))
+;; (when (not (string-equal system-type "darwin"))
+;;     (disable-packages! macos))
 #+end_src
 
 * Themes and Fonts

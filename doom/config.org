@@ -143,6 +143,7 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 (setq org-directory "~/org/")
 (add-hook 'org-mode-hook 'org-indent-mode)
 (add-hook 'org-mode-hook 'org-hide-block-all)
+(add-hook 'org-mode-hook '(lambda () (require 'org-ref)))
 
 (after! org
         (setq org-startup-indented t)
@@ -364,7 +365,7 @@ Make sure PDF Tools is the first viewing option on the list
     (push '(output-pdf "PDF Tools") TeX-view-program-selection))
 #+END_SRC
 
-** BibTeX
+* Bibliography
 #+BEGIN_SRC emacs-lisp
 
 (setq bibtex-completion-pdf-field "File")
@@ -376,12 +377,16 @@ Make sure PDF Tools is the first viewing option on the list
 (setq bibtex-completion-browser-function 'my/bibtex-open-pdf)
 
 
-(defun my/open-bib ()
+(defun my/find-bib ()
   (interactive)
   (let ((root (projectile-acquire-root)))
     (setq bibtex-completion-library-path (concat root "references")
-          bibtex-completion-bibliography (concat root "bib.bib"))
-    (helm-bibtex-with-local-bibliography)))
+          bibtex-completion-bibliography (concat root "bib.bib"))))
+
+(defun my/open-bib ()
+  (interactive)
+  (my/find-bib)
+  (helm-bibtex-with-local-bibliography))
 
 (map! :leader :desc "Open helm-bibtex" :g "z" 'my/open-bib)
 

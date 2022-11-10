@@ -20,6 +20,7 @@ import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.SetWMName
 import XMonad.Layout.Spacing
 import System.Exit
+import XMonad.Prompt.Pass
 
 import Data.Monoid
 import Data.Maybe (fromJust)
@@ -31,7 +32,6 @@ import qualified Data.Map        as M
 
 The preferred terminal program, which is used in a binding below and by
 certain contrib modules.
-
 * Defaults
 #+begin_src haskell
 myTerminal      = "alacritty"
@@ -103,38 +103,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- launch toggl
     , ((modm .|. shiftMask, xK_t     ), spawn "flatpak run com.toggl.TogglDesktop")
 
-    , ((modm              , xK_f     ), spawn "/home/stuart/bin/flipscreen")
-
-    , ((modm              , xK_s     ), spawn "systemctl suspend")
-
-
-    , ((modm              , xK_o     ), spawn "xmodmap ~/.Xmodmap && notify-send \"xmodmap loaded\" -t 1000")
-
-
-    , ((modm .|. shiftMask, xK_s     ), spawn "sleep 1; xset dpms force off")
-
-    -- toggl light/dark mode
-    , ((modm              , xK_g     ), spawn "~/bin/togglcolor")
-
-    -- close focused window
-    , ((modm              , xK_q     ), kill)
-
-     -- Rotate through the available layout algorithms
-    , ((modm,               xK_p ), sendMessage NextLayout)
-
-    --  Reset the layouts on the current workspace to default
-    , ((modm .|. shiftMask, xK_space ), setLayout $ XMonad.layoutHook conf)
-
-    -- Resize viewed windows to the correct size
-    , ((modm,               xK_n     ), refresh)
-
-    -- Move focus to the next window
-    , ((modm,               xK_Tab   ), windows W.focusDown)
-
-    -- Move focus to the next window
-    , ((modm,               xK_j     ), windows W.focusDown)
-
-    -- Move focus to the previous window
+    , ((modm .|. shiftMask, xK_p     ), passTypePrompt def) , ((modm              , xK_f     ), spawn "/home/stuart/bin/flipscreen") , ((modm              , xK_s     ), spawn "systemctl suspend") , ((modm              , xK_o     ), spawn "xmodmap ~/.Xmodmap && notify-send \"xmodmap loaded\" -t 1000") , ((modm .|. shiftMask, xK_s     ), spawn "sleep 1; xset dpms force off") -- toggl light/dark mode , ((modm              , xK_g     ), spawn "~/bin/togglcolor") -- close focused window , ((modm              , xK_q     ), kill) -- Rotate through the available layout algorithms , ((modm,               xK_p ), sendMessage NextLayout) --  Reset the layouts on the current workspace to default , ((modm .|. shiftMask, xK_space ), setLayout $ XMonad.layoutHook conf) -- Resize viewed windows to the correct size , ((modm,               xK_n     ), refresh) -- Move focus to the next window , ((modm,               xK_Tab   ), windows W.focusDown) -- Move focus to the next window , ((modm,               xK_j     ), windows W.focusDown) -- Move focus to the previous window
     , ((modm,               xK_k     ), windows W.focusUp  )
 
     -- Move focus to the next screen

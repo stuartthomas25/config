@@ -253,5 +253,8 @@ function catlatest () {
     echo "Log File: $(ls -rt $1 | tail -n 1)"
     cat "$1$(ls -rt $1 | tail -n 1)"
 }
-export XDG_DATA_HOME=/scratch/zt1/project/cmtc/user/snthomas
+
+case "$(hostname)" in
+    *zaratan*)   export XDG_DATA_HOME=/scratch/zt1/project/cmtc/user/snthomas ;;
+esac
 #+end_src

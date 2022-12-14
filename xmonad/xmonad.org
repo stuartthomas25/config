@@ -35,6 +35,7 @@ certain contrib modules.
 * Defaults
 #+begin_src haskell
 myTerminal      = "alacritty"
+myEmacs         = "export DBUS_SESSION_BUS_ADDRESS=$(systemctl --user show-environment | grep DBUS_SESSION_BUS_ADDRESS | cut -d= -f 2-); /usr/bin/emacs --daemon &"
 
 -- Whether focus follows the mouse pointer.
 myFocusFollowsMouse :: Bool
@@ -79,9 +80,13 @@ clickable ws = "<action=xdotool key super+"++show i++">"++ws++"</action>"
 
 -- Border colors for unfocused and focused windows, respectively.
 --
-myNormalBorderColor  = "#ebdbb2"
-myFocusedBorderColor = "#fe8019"
+-- myNormalBorderColor  = "#ebdbb2"
+-- myFocusedBorderColor = "#fe8019"
+
+myNormalBorderColor  = "#000000"
+myFocusedBorderColor = "#ffffff"
 #+end_src
+
 * Key Bindings
 Key bindings. Add, modify or remove key bindings here.
 
@@ -103,7 +108,45 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- launch toggl
     , ((modm .|. shiftMask, xK_t     ), spawn "flatpak run com.toggl.TogglDesktop")
 
-    , ((modm .|. shiftMask, xK_p     ), passTypePrompt def) , ((modm              , xK_f     ), spawn "/home/stuart/bin/flipscreen") , ((modm              , xK_s     ), spawn "systemctl suspend") , ((modm              , xK_o     ), spawn "xmodmap ~/.Xmodmap && notify-send \"xmodmap loaded\" -t 1000") , ((modm .|. shiftMask, xK_s     ), spawn "sleep 1; xset dpms force off") -- toggl light/dark mode , ((modm              , xK_g     ), spawn "~/bin/togglcolor") -- close focused window , ((modm              , xK_q     ), kill) -- Rotate through the available layout algorithms , ((modm,               xK_p ), sendMessage NextLayout) --  Reset the layouts on the current workspace to default , ((modm .|. shiftMask, xK_space ), setLayout $ XMonad.layoutHook conf) -- Resize viewed windows to the correct size , ((modm,               xK_n     ), refresh) -- Move focus to the next window , ((modm,               xK_Tab   ), windows W.focusDown) -- Move focus to the next window , ((modm,               xK_j     ), windows W.focusDown) -- Move focus to the previous window
+    -- restart emacs
+    , ((modm .|. shiftMask, xK_e     ), spawn $ "killall emacs;" ++ myEmacs)
+
+    , ((modm .|. shiftMask, xK_p     ), passTypePrompt def)
+
+    , ((modm              , xK_f     ), spawn "/home/stuart/bin/flipscreen")
+
+    , ((modm              , xK_f     ), spawn "/home/stuart/bin/flipscreen")
+
+    , ((modm              , xK_s     ), spawn "systemctl suspend")
+
+
+    , ((modm              , xK_o     ), spawn "xmodmap ~/.Xmodmap && notify-send \"xmodmap loaded\" -t 1000")
+
+
+    , ((modm .|. shiftMask, xK_s     ), spawn "sleep 1; xset dpms force off")
+
+    -- toggl light/dark mode
+    , ((modm              , xK_g     ), spawn "~/bin/togglcolor")
+
+    -- close focused window
+    , ((modm              , xK_q     ), kill)
+
+     -- Rotate through the available layout algorithms
+    , ((modm,               xK_p ), sendMessage NextLayout)
+
+    --  Reset the layouts on the current workspace to default
+    , ((modm .|. shiftMask, xK_space ), setLayout $ XMonad.layoutHook conf)
+
+    -- Resize viewed windows to the correct size
+    , ((modm,               xK_n     ), refresh)
+
+    -- Move focus to the next window
+    , ((modm,               xK_Tab   ), windows W.focusDown)
+
+    -- Move focus to the next window
+    , ((modm,               xK_j     ), windows W.focusDown)
+
+    -- Move focus to the previous window
     , ((modm,               xK_k     ), windows W.focusUp  )
 
     -- Move focus to the next screen
@@ -140,7 +183,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- Use this binding with avoidStruts from Hooks.ManageDocks.
     -- See also the statusBar function from Hooks.DynamicLog.
     --
-    , ((modm              , xK_b     ), sendMessage ToggleStruts)
+    -- , ((modm              , xK_b     ), sendMessage ToggleStruts)
 
     -- Quit xmonad
     , ((modm .|. shiftMask, xK_q     ), io (exitWith ExitSuccess))
@@ -149,26 +192,26 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm .|. shiftMask, xK_c     ), spawn "killall xmobar; killall picom; xmonad --recompile; xmonad --restart")
 
     -- Run xmessage with a summary of the default keybindings (useful for beginners)
-    , ((modm .|. shiftMask, xK_slash ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
+    -- , ((modm .|. shiftMask, xK_slash ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
     ]
     ++
 
-    --
+
     -- mod-[1..9], Switch to workspace N
     -- mod-shift-[1..9], Move client to workspace N
-    --
+
     [((m .|. modm, k), windows $ f i)
         | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
         , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
-    ++
+    -- ++
 
-    --
-    -- mod-{w,e,r}, Switch to physical/Xinerama screens 1, 2, or 3
-    -- mod-shift-{w,e,r}, Move client to screen 1, 2, or 3
-    --
-    [((m .|. modm, key), screenWorkspace sc >>= flip whenJust (windows . f))
-        | (key, sc) <- zip [xK_w, xK_e, xK_r] [0..]
-        , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
+
+    -- -- mod-{w,e,r}, Switch to physical/Xinerama screens 1, 2, or 3
+    -- -- mod-shift-{w,e,r}, Move client to screen 1, 2, or 3
+
+    -- [((m .|. modm, key), screenWorkspace sc >>= flip whenJust (windows . f))
+    --     | (key, sc) <- zip [xK_w, xK_e, xK_r] [0..]
+    --     , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
 
 #+end_src
 
@@ -281,8 +324,8 @@ myStartupHook = do
     spawnOnce "nitrogen --restore &"
     spawn "dunst -conf /home/stuart/.config/dunstrc &"
     -- spawn "picom &"
-    spawnOnce "export DBUS_SESSION_BUS_ADDRESS=$(systemctl --user show-environment | grep DBUS_SESSION_BUS_ADDRESS | cut -d= -f 2-); /usr/bin/emacs --daemon &"
-    spawnOnce "dropbox start &"
+    spawnOnce myEmacs
+    -- spawnOnce "dropbox start &"
     setWMName "LG3D"
 
 ------------------------------------------------------------------------

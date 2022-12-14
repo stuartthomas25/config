@@ -552,7 +552,7 @@ apps are not started from a shell."
 ;;         (message "Done!")
 ;;         (setq my/waiting-buffers (remove buff my/waiting-buffers))))))
 
-(add-hook 'julia-mode-hook (lambda () (set-input-method 'TeX)))
+(add-hook 'julia-mode-hook (lambda () (set-input-method 'julia)))
 
 ;; (add-to-list window-buffer-change-functions 'my/ob-julia-callback)
 ;; (setq window-buffer-change-functions '(my/ob-julia-callback doom-run-switch-buffer-hooks-h))

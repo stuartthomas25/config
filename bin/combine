@@ -1,0 +1,62 @@
+#!/usr/bin/env julia
+
+using ArgParse
+
+s = ArgParseSettings("""Combine data
+Usage:
+    combine.jl sourcedir outputfile
+""")
+@add_arg_table! s begin
+    "input"
+        nargs='*'
+        help = "Input directories"
+    "--output", "-o"
+        help = "File output (defaults to same filename"
+        arg_type = String
+        default = nothing
+        
+end
+parsed_args = parse_args(ARGS, s)
+
+using TypedTables: Table
+using Arrow
+
+inputs = parsed_args["input"]
+outputfile = parsed_args["output"]
+combinedtables = Table[]
+
+for input in inputs
+    if input[end]=='/'
+        input = input[1:end-1]
+    end
+
+    fns = readdir(input)
+    if length(fns)==0 continue end
+    tables = Table[]
+    for filename in fns
+        tab = Table(Arrow.Table(input*"/"*filename))
+        push!(tables, tab)
+    end
+
+    table = vcat(tables...)
+
+    # add filename
+    table = Table( table, (filename=fill(input, length(table)),) )
+
+
+    if isnothing(outputfile)
+        output = input * ".arrow"
+        Arrow.write(output, table)
+        @info "Written to $output"
+    else
+        push!(combinedtables, table)
+    end
+end
+
+if !isnothing(outputfile)
+    Arrow.write(outputfile, vcat(combinedtables...))
+    @info "Written to $outputfile"
+end
+    
+
+# run(`rm -r $input`)

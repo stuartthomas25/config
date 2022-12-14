@@ -1,0 +1,33 @@
+#!/bin/bash
+
+BACKUPDIR="$HOME/.backups"
+
+if ! [ -e "$BACKUPDIR" ]; then
+    mkdir $BACKUPDIR
+fi
+
+if ! [ -e "$BACKUPDIR/backups" ]; then
+    mkdir "$BACKUPDIR/backups"
+fi
+
+if ! [ -e "$BACKUPDIR/directories" ]; then
+    touch "$BACKUPDIR/directories"
+fi
+
+_backup() (
+    for f in $(cat "$BACKUPDIR/directories")
+    do
+        dest="${BACKUPDIR}/backups${f}.zip"
+        mkdir -p "$(dirname "$dest")"
+        zip -r "$dest" "$f"
+    done
+)
+
+case "$1" in
+add)
+  echo "$(readlink -f $2)" >> $BACKUPDIR/directories;;
+"")
+  _backup;;
+*)
+  echo "Invalid command";;
+esac

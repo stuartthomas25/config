@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# echo $(date) >> /tmp/udev-debug.log
+# (sleep 4 && /usr/bin/xmodmap -v -display :0 /home/stuart/.Xmodmap >> /tmp/udev-debug.log 2>&1) &
+
+#!/usr/bin/env bash
+set -euo pipefail
+
+export DISPLAY=":0"
+export HOME=/home/stuart
+
+min_seconds_between_executions=5
+date_file="/tmp/last-udev-xmodmap"
+now=$(date +%s)
+
+if [[ -f $date_file ]]; then
+    prev_ts=$(cat "$date_file")
+else
+    prev_ts=0
+fi
+
+if ((now - prev_ts <= min_seconds_between_executions)); then
+    exit 0
+fi
+
+echo "$now" > "$date_file"
+
+do_xmodmap() {
+    sleep 1
+    xmodmap $HOME/.Xmodmap
+    notify-send "Xmodmap" "Keymap successfully activated"
+}
+
+do_xmodmap &> "${date_file}.log" &

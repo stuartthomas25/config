@@ -1,0 +1,41 @@
+#!/usr/bin/env -S julia -i
+
+using Arrow
+using TypedTables
+
+datafile = ARGS[1]
+
+data = copy(Table(Arrow.Table(datafile)))
+_rawmetadata = Arrow.getmetadata(Arrow.Table(datafile))
+if isnothing(_rawmetadata)
+    metadata = Dict()
+else
+    metadata = Dict(_rawmetadata)
+end
+
+macro wq()
+    quote
+        Arrow.write(datafile, data; metadata = [k=>v for (k,v) in metadata])
+        exit()
+    end
+end
+
+macro addcol(cols...)
+    quote
+        newrow = NamedTuple(Dict(x.args[1] => x.args[2] for x in $cols))
+        newtab = Table(fill(newrow, length(data)))
+        global data = Table(data, newtab)
+    end
+end
+
+
+println("
+        Editing $datafile... \n
+        Table stored as `data` variable \n
+        Metadata stored as `metadata` variable \n
+        Use `@addcol` macro to add a column\n
+        Type `@wq` to save and quit \n
+        ------------\n\n
+        ")
+
+

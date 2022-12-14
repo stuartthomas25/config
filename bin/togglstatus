@@ -1,0 +1,15 @@
+#!/usr/bin/bash
+
+projectname=$($HOME/miniconda3/bin/toggl --no-header now | sed -n "4p" | sed -e 's/ (#\w\+)//')
+# if [ $(toggl now) = 'There is no time entry running!' || $(toggl now) = '' ]; then
+if [[ -z $projectname ]]; then
+    echo "<fc=#cc99ff>Toggl Stopped</fc>"
+else
+    projectname=$($HOME/miniconda3/bin/toggl --no-header now | sed -n "4p" | sed -e 's/ (#\w\+)//')
+    time=$($HOME/miniconda3/bin/toggl --no-header now | sed -n "3p")
+    if [[ "$time" > "0:25:00" ]]; then
+        echo "<fc=#ff0000>*TAKE A BREAK!* $projectname (${time::-3})</fc>"
+    else
+        echo "$projectname (${time::-3})"
+    fi
+fi

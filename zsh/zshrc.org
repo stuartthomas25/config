@@ -171,9 +171,12 @@ alias gt="git status"
 alias cd="conda_cd"
 cd . # so ^ runs on new tab
 
+#+end_src
 
+Custom path
+#+begin_src bash
 export PATH=$HOME/bin:$HOME/.emacs.d/bin:$PATH
-
+export PATH=$HOME/.elan/bin:$PATH
 #+end_src
 
 * Config things

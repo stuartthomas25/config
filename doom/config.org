@@ -105,6 +105,7 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 (map! :leader :desc "Next Tab" :g "l" #'+workspace/switch-right)
 (map! :leader :desc "Previous Tab" :g "L" #'+workspace/switch-left)
 
+(use-package! julia-quail)
 #+end_src
 
 ** Ligatures
@@ -551,7 +552,7 @@ apps are not started from a shell."
 ;;         (message "Done!")
 ;;         (setq my/waiting-buffers (remove buff my/waiting-buffers))))))
 
-(add-hook 'julia-mode-hook (lambda () (set-input-method 'TeX)))
+(add-hook 'julia-mode-hook (lambda () (set-input-method 'julia)))
 
 ;; (add-to-list window-buffer-change-functions 'my/ob-julia-callback)
 ;; (setq window-buffer-change-functions '(my/ob-julia-callback doom-run-switch-buffer-hooks-h))

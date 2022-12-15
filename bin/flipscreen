@@ -1,0 +1,8 @@
+#!/bin/bash
+if [[ "$(xrandr -q)" == *"left (normal"* ]]; then
+    source ~/.screenlayout/main.sh
+else
+    source ~/.screenlayout/flipped.sh
+fi
+nitrogen --restore
+

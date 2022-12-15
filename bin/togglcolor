@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ -e "$HOME/.light" ]; then
+    rm "$HOME/.light"
+    alacritty-themes Gruvbox-Dark
+    emacsclient -e "(load-theme 'doom-gruvbox)"
+else
+    touch "$HOME/.light"
+    alacritty-themes Gruvbox-Light
+    emacsclient -e "(load-theme 'doom-gruvbox-light)"
+fi

@@ -67,6 +67,6 @@
 (package! ob-julia-vterm) 
 (package! org-auto-tangle)
 (package! ewal)
-(package! doom-ewal-themes :recipe (:host github :repo "jdormit/doom-ewal-themes"))
 (package! org-modern)
 (package! org-inline-pdf)
+(package! julia-quail :recipe (:host github :repo "stuartthomas25/julia-quail"))

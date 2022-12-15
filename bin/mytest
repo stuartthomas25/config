@@ -1,0 +1,3 @@
+#!/bin/bash
+
+/usr/bin/notify-send "Test successful!" -t 1000

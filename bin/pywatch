@@ -1,0 +1,31 @@
+#!/home/stuart/miniconda3/bin/python3
+
+import sys
+from time import sleep
+import re
+import glob
+import os
+
+
+
+if len(sys.argv)<2:
+    fn = max(glob.iglob('logs/*.out'), key=os.path.getctime)
+else:
+    fn = sys.argv[1]
+print(fn+":\n")
+
+loc = 0
+
+while True:
+    with open(fn, 'r', encoding="utf-8") as f:
+        f.seek(loc)
+        data = f.read()
+        # data = re.sub("\n.*\r","",data)
+        data = data.replace("\n\x1b[1A\n","\r")
+
+        sys.stdout.write(data[:-1])
+        loc = f.tell()
+        try:
+            sleep(2)
+        except KeyboardInterrupt:
+            break

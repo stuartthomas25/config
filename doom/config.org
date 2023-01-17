@@ -319,6 +319,11 @@ snthomas@umd.edu \\\\
 
 #+END_SRC
 
+Show images by default
+#+begin_src emacs-lisp
+(setq gnus-blocked-images nil)
+#+end_src
+
 Disable Main Menu
 #+begin_src emacs-lisp
 (add-hook 'mu4e-main-mode-hook #'(lambda () (mu4e~headers-jump-to-maildir "/umd/INBOX")))
@@ -414,21 +419,21 @@ Make sure PDF Tools is the first viewing option on the list
 (map! (:map bibtex-mode-map :localleader "d" :desc "Replace DOI in line with Bibtex reference" #'my/doi-to-reference))
 
 (defconst stumacs-urls-to-avoid '("scitation" "link.aps.org/article/"))
+
 ;; returns t if retrieved successfully
 (defun display-pdf (url &optional fname)
   (message (concat "Retrieving " url))
   (unless (-any? (lambda (m) (string-match-p m url)) stumacs-urls-to-avoid)
-    (let ((buffer (url-retrieve-synchronously url nil nil 5)))
-
-      (when buffer (when (equal 200 (url-http-symbol-value-in-buffer 'url-http-response-status buffer))
-        (goto-char (point-min))
-        (re-search-forward "^$")
-        (delete-region (point) (point-min))
+    (let ((buffer (url-retrieve-synchronously url nil nil 5))
+          (filename (if fname fname (make-temp-file "stumacs" nil ".pdf"))))
+      (when (and buffer (equal 200 (url-http-symbol-value-in-buffer 'url-http-response-status buffer)))
         (message "Successfully retrieved PDF")
-        (let ((filename (if fname fname (make-temp-file "stumacs" nil ".pdf"))))
-          (with-current-buffer buffer (write-region (point) (point-max) filename))
-          (find-file filename))
-        t)))))
+        (with-current-buffer buffer
+            (goto-char (point-min))
+            (re-search-forward "^$")
+            (write-region (point) (point-max) filename))
+        (find-file filename)
+        t))))
 
 (defun callback (status &optional fname)
   "Uri callback.

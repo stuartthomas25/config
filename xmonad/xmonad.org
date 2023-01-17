@@ -109,6 +109,9 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm .|. shiftMask, xK_t     ), spawn "flatpak run com.toggl.TogglDesktop")
 
     -- restart emacs
+    , ((modm .|. shiftMask, xK_b     ), spawn $ "bluetoothctl connect F0:1D:BC:F6:94:37")
+
+    -- connect bluetooth headphones
     , ((modm .|. shiftMask, xK_e     ), spawn $ "killall emacs;" ++ myEmacs)
 
     , ((modm .|. shiftMask, xK_p     ), passTypePrompt def)

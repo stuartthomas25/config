@@ -87,7 +87,7 @@ ZSH_CUSTOM="$CONFIG/zsh/custom"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-vi-mode)
+plugins=(git zsh-vi-mode zsh-autocomplete)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -116,7 +116,9 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-
+#+end_src
+* Aliases
+#+begin_src bash
 
 
 
@@ -127,6 +129,7 @@ else
 fi
 
 alias logout='exit'
+alias latest='ls -t | head -n 1'
 alias rm='trash'
 alias mv='mv -i'
 alias ..='cd ..'

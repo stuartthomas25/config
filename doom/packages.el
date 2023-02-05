@@ -69,4 +69,5 @@
 (package! ewal)
 (package! org-modern)
 (package! org-inline-pdf)
+(package! org-roam-server)
 (package! julia-quail :recipe (:host github :repo "stuartthomas25/julia-quail"))

@@ -186,13 +186,12 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 
     (dashboard-insert-section
         "Mail"
-        '("0|hello" "1|goodbye" "2|hi")
+        '("0|hello" "1|goodbye" "data")
         3
         'custom
         "c"
-        (lambda (&rest _) nil))))
-
-
+        (lambda (&rest _) nil)
+        (format "%s" el))))
 
 
   (use-package! dashboard
@@ -210,7 +209,7 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
     (setq dashboard-center-content t) ;; set to 't' for centered content
     (setq dashboard-items
           '(
-            (recents . 5)
+            (recents . 10)
 	    (agenda . 15 )
 	    (projects . 5)
             (mail . 5)))
@@ -331,6 +330,11 @@ Disable Main Menu
 (remove-hook 'mu4e-main-mode-hook #'+mu4e-init-h)
 #+end_src
 
+Change keybinding to `mu4e`, not the doom wrapper
+#+begin_src emacs-lisp
+(map! :leader :desc "Open Mu4e" :g "o m" 'mu4e)
+#+end_src
+
 * LaTeX
 #+BEGIN_SRC emacs-lisp
 (after! projectile
@@ -363,6 +367,9 @@ Disable Main Menu
 
 (setq LaTeX-default-environment "equation")
 (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
+
+(setq TeX-arg-right-insert-p nil)
+(setq TeX-electric-sub-and-superscript nil)
 #+END_SRC
 
 Make sure PDF Tools is the first viewing option on the list
@@ -472,6 +479,7 @@ STATUS: the status"
   (message "%s" (concat "Opening link: " uri))
   (unless default-open-function (setq default-open-function #'browse-url-default-browser))
   (cond ((string-match doi-regex uri) (open-doi (match-string 0 uri) fname))
+        ((string-match doi-regex uri) (open-doi (concat "10.1038/" (match-string 1 uri)) fname))
         ((string-match "[0-9]\\{4\\}\\.[0-9]\\{5\\}\\(v[0-9]+\\)*$" uri) (open-arxiv (match-string 0 uri) fname))
         ((string-match "arxiv:\\([-a-z]+\\/[0-9]\\{7\\}\\(v[0-9]+\\)*\\)$" uri) (open-arxiv (match-string 1 uri) fname)) ;;old style, identifier
         ((string-match "arxiv\\.org\\/abs\\/\\([-a-z]+\\/[0-9]\\{7\\}\\(v[0-9]+\\)*\\)$" uri) (open-arxiv (match-string 1 uri) fname)) ;; old style, url
@@ -482,6 +490,10 @@ STATUS: the status"
 
 (setq browse-url-browser-function #'open-link)
 #+END_SRC
+
+#+RESULTS:
+: open-link
+
 * Command Line
 #+BEGIN_SRC emacs-lisp
 (setq conda-env-home-directory "/opt/miniforge3")

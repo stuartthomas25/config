@@ -101,7 +101,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm              , xK_space ), spawn "dmenu_run_history -sb \"#fe8019\" -i")
 
     , ((modm .|. mod1Mask , xK_equal), spawn "alacritty")
-    , ((modm .|. mod1Mask , xK_minus), spawn "emacsclient -c -e '(dashboard-mode)'")
+    , ((modm .|. mod1Mask , xK_minus), spawn "~/bin/e")
     , ((modm .|. mod1Mask , xK_0), spawn "qutebrowser")
     , ((modm .|. mod1Mask , xK_9), spawn "flatpak run com.spotify.Client")
 

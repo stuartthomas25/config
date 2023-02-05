@@ -16,7 +16,7 @@ fi
 # Path to your oh-my-zsh installation.
 export CONFIG="$HOME/.config"
 export ZSH="$CONFIG/oh-my-zsh"
-export EDITOR="emacsclient -c"
+export EDITOR="e"
 export ALTERNATE_EDITOR="vim"
 
 # Set name of the theme to load --- if set to "random", it will
@@ -87,7 +87,7 @@ ZSH_CUSTOM="$CONFIG/zsh/custom"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-vi-mode zsh-autocomplete)
+plugins=(git zsh-vi-mode)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -117,16 +117,19 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 #+end_src
+
+#+RESULTS:
+
 * Aliases
 #+begin_src bash
 
 
 
-if [[ -z $DISPLAY ]]; then
-    alias e='emacsclient'
-else
-    alias e='emacsclient -c'
-fi
+# if [[ -z $DISPLAY ]]; then
+#     alias e='emacsclient'
+# else
+#     alias e='emacsclient -c'
+# fi
 
 alias logout='exit'
 alias latest='ls -t | head -n 1'
@@ -180,7 +183,10 @@ Custom path
 #+begin_src bash
 export PATH=$HOME/bin:$HOME/.emacs.d/bin:$PATH
 export PATH=$HOME/.elan/bin:$PATH
+export XDG_DATA_DIRS=$XDG_DATA_DIRS:$HOME/.local/share/
 #+end_src
+
+#+RESULTS:
 
 * Config things
 #+begin_src bash
@@ -253,8 +259,8 @@ fi
 
 * Slurm tools
 #+begin_src bash
-alias wsq="watch \"squeue -u $USER -o '%.8i %.5P %.20j %.10u %.2t %.11L %.10M %.2D %.2C %R'\""
-alias sq="squeue -u $USER -o '%.8i %.5P %.20j %.10u %.2t %.11L %.10M %.2D %.2C %R'"
+alias wsq="watch \"squeue -u $USER -o '%.10i %.5P %.20j %.2t %.11L %.10M %.2D %.2C %R'\""
+alias sq="squeue -u $USER -o '%.10i %.5P %.20j %.2t %.11L %.10M %.2D %.2C %R'"
 function catlatest () {
     echo "Log File: $(ls -rt $1 | tail -n 1)"
     cat "$1$(ls -rt $1 | tail -n 1)"

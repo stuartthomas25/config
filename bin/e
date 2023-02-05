@@ -1,0 +1,13 @@
+#!/bin/sh
+
+if [ -z $DISPLAY ]; then
+    stem='emacsclient'
+else
+    stem='emacsclient -c'
+fi
+
+if [ -z $@ ]; then
+    $stem -e '(dashboard-mode)'
+else
+    $stem $@
+fi

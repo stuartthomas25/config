@@ -105,6 +105,9 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 (map! :leader :desc "Next Tab" :g "l" #'+workspace/switch-right)
 (map! :leader :desc "Previous Tab" :g "L" #'+workspace/switch-left)
 
+(map! :n "M-RET" #'(lambda () (interactive) (+evil/insert-newline-above 1) (evil-next-line)))
+(map! :n "RET" #'(lambda () (interactive) (+evil/insert-newline-below 1) (evil-next-line)))
+
 (use-package! julia-quail)
 #+end_src
 
@@ -408,6 +411,35 @@ Make sure PDF Tools is the first viewing option on the list
 (setq bibtex-autokey-year-title-separator "")
 (setq bibtex-autokey-year-length 4)
 (setq biblio-bibtex-use-autokey t)
+
+
+ (setq bibtex-completion-fallback-options '(
+  ("CrossRef                                  (biblio.el)" lambda
+  (search-expression)
+  (biblio-lookup #'biblio-crossref-backend search-expression))
+ ("arXiv                                     (biblio.el)" lambda
+  (search-expression)
+  (biblio-lookup #'biblio-arxiv-backend search-expression))
+ ;; ("DBLP (computer science bibliography)      (biblio.el)" lambda
+ ;;  (search-expression)
+ ;;  (biblio--lookup-1 #'biblio-dblp-backend search-expression))
+ ;; ("HAL (French open archive)                 (biblio.el)" lambda
+ ;;  (search-expression)
+ ;;  (biblio--lookup-1 #'biblio-hal-backend search-expression))
+ ("IEEE                                      (biblio.el)" lambda
+  (search-expression)
+  (biblio--lookup-1 #'biblio-ieee-backend search-expression))
+ ("Google Scholar                            (web)" . "https://scholar.google.co.uk/scholar?q=%s")
+ ;; ("Pubmed                                    (web)" . "https://www.ncbi.nlm.nih.gov/pubmed/?term=%s")
+ ;; ("Bodleian Library                          (web)" . "http://solo.bodleian.ox.ac.uk/primo_library/libweb/action/search.do?vl(freeText0)=%s&fn=search&tab=all")
+ ;; ("Library of Congress                       (web)" . "https://www.loc.gov/search/?q=%s&all=true&st=list")
+ ;; ("Deutsche Nationalbibliothek               (web)" . "https://portal.dnb.de/opac.htm?query=%s")
+ ;; ("British National Library                  (web)" . "http://explore.bl.uk/primo_library/libweb/action/search.do?&vl(freeText0)=%s&fn=search")
+ ;; ("Bibliothèque nationale de France          (web)" . "http://catalogue.bnf.fr/servlet/RechercheEquation?host=catalogue?historique1=Recherche+par+mots+de+la+notice&niveau1=1&url1=/jsp/recherchemots_simple.jsp?host=catalogue&maxNiveau=1&categorieRecherche=RechercheMotsSimple&NomPageJSP=/jsp/recherchemots_simple.jsp?host=catalogue&RechercheMotsSimpleAsauvegarder=0&ecranRechercheMot=/jsp/recherchemots_simple.jsp&resultatsParPage=20&x=40&y=22&nbElementsHDJ=6&nbElementsRDJ=7&nbElementsRCL=12&FondsNumerise=M&CollectionHautdejardin=TVXZROM&HDJ_DAV=R&HDJ_D2=V&HDJ_D1=T&HDJ_D3=X&HDJ_D4=Z&HDJ_SRB=O&CollectionRezdejardin=UWY1SPQM&RDJ_DAV=S&RDJ_D2=W&RDJ_D1=U&RDJ_D3=Y&RDJ_D4=1&RDJ_SRB=P&RDJ_RLR=Q&RICHELIEU_AUTRE=ABCDEEGIKLJ&RCL_D1=A&RCL_D2=K&RCL_D3=D&RCL_D4=E&RCL_D5=E&RCL_D6=C&RCL_D7=B&RCL_D8=J&RCL_D9=G&RCL_D10=I&RCL_D11=L&ARSENAL=H&LivrePeriodique=IP&partitions=C&images_fixes=F&son=S&images_animees=N&Disquette_cederoms=E&multimedia=M&cartes_plans=D&manuscrits=BT&monnaies_medailles_objets=JO&salle_spectacle=V&Monographie_TN=M&Periodique_TN=S&Recueil_TN=R&CollectionEditorial_TN=C&Ensemble_TN=E&Spectacle_TN=A&NoticeB=%s")
+ ;; ("Gallica Bibliothèque Numérique            (web)" . "http://gallica.bnf.fr/Search?q=%s")
+
+ ))
+
 
 #+END_SRC
 

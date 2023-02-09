@@ -181,20 +181,32 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 
 * Dashboard
 #+BEGIN_SRC emacs-lisp
-(defun my/dashboard-insert-mail (list-size)
-  ;;(mu4e-update-mail-and-index)
-  (let ((data (with-temp-buffer
-    (start-process "mu" (current-buffer) "/usr/bin/mu" "find" "flag:unread" "--format=sexp")
-    (buffer-string))))
 
-    (dashboard-insert-section
-        "Mail"
-        '("0|hello" "1|goodbye" "data")
-        3
-        'custom
-        "c"
-        (lambda (&rest _) nil)
-        (format "%s" el))))
+(defun snt/s-truncate (LEN STR)
+  " like s-truncate but adds spaces if the string is shorter than LEN"
+  (let ((stem (s-truncate LEN STR)))
+    (concat stem (s-repeat (- LEN (length stem)) " "))))
+
+(defun snt/parse-msg (msg)
+    (let ((subject (plist-get msg :subject))
+          (from (plist-get (car (plist-get msg :from)) :name)))
+      (concat (snt/s-truncate 20 from) " | " (snt/s-truncate 50 subject))))
+
+(defun snt/get-new-msgs ()
+  (let ((output (car (read-from-string (concat "(" (shell-command-to-string "mu find flag:unread --format=sexp") ")")))))
+    (if (listp (car output)) output '())))
+
+(defun snt/dashboard-insert-mail (list-size)
+    (let ((data (snt/get-new-msgs)))
+        (dashboard-insert-section
+            "Mail"
+            ;; (butlast msgs (- (length msgs) list-size))
+            (butlast data (- (length data) list-size))
+            list-size
+            'custom
+            "m"
+            `(lambda (&rest _) (mu4e-view-message-with-message-id (plist-get el :message-id)))
+            (format "%s" (snt/parse-msg el)))))
 
 
   (use-package! dashboard
@@ -213,8 +225,8 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
     (setq dashboard-items
           '(
             (recents . 10)
-	    (agenda . 15 )
-	    (projects . 5)
+            (agenda . 15 )
+            (projects . 5)
             (mail . 5)))
 
     (setq dashboard-agenda-time-string-format "%a, %b %d")
@@ -222,7 +234,7 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
     (setq dashboard-agenda-prefix-format "(%(projectile-project-name)) %i %-12:c %s ")
     (setq dashboard-agenda-sort-strategy '(time-up todo-state-up))
     :config
-    (add-to-list 'dashboard-item-generators  '(mail . my/dashboard-insert-mail))
+    (add-to-list 'dashboard-item-generators  '(mail . snt/dashboard-insert-mail))
     (dashboard-setup-startup-hook)
     (setq dashboard-set-footer nil)
     (setq dashboard-force-refresh t)

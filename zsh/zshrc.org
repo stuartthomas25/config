@@ -122,9 +122,6 @@ source $ZSH/oh-my-zsh.sh
 
 * Aliases
 #+begin_src bash
-
-
-
 # if [[ -z $DISPLAY ]]; then
 #     alias e='emacsclient'
 # else
@@ -165,7 +162,7 @@ ex ()
 
 conda_cd ()
 {
-    eval "\cd $1"
+    eval "\cd \"$1\""
     if [ -e .condaenv ] ; then
         conda activate $(cat .condaenv)
     fi

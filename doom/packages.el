@@ -52,7 +52,9 @@
 ;(package! zotero :recipe
           ;(:host github
            ;:repo "emacsmirror/zotero"))
-(package! dashboard)
+(package! dashboard
+  :recipe (:local-repo "~/src/emacs-dashboard"))
+
 (package! darkroom)
 ; (package! zotelo)
 ;; (package! zotero
@@ -71,3 +73,4 @@
 (package! org-inline-pdf)
 (package! org-roam-server)
 (package! julia-quail :recipe (:host github :repo "stuartthomas25/julia-quail"))
+(package! polymode)

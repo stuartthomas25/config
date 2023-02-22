@@ -16,6 +16,35 @@ Some functionality uses this to identify you, e.g. GPG configuration, email clie
 ;;     (disable-packages! macos))
 #+end_src
 
+* PDFs
+#+begin_src elisp
+(defun snt/pdf-relabel ()
+  (interactive)
+  (shell-command (format "~/bin/pdfrelabel %d \"%s\"" (pdf-view-current-page) (buffer-file-name)))
+  (revert-buffer))
+#+end_src
+
+#+RESULTS:
+: snt/pdf-relabel
+
+** PDF themes
+#+BEGIN_SRC emacs-lisp
+(defun update-pdf-colors ()
+  (interactive)
+  (setq pdf-view-midnight-colors
+        (cons (face-attribute 'default :foreground) (face-attribute 'default :background))))
+
+
+;; (add-hook 'pdf-view-mode-hook 'pdf-view-midnight-minor-mode)
+
+(after! pdf-tools (update-pdf-colors))
+
+(map! :mode pdf-view-mode (:n "C-h" 'pdf-view-align-left) (:n "C-l" 'pdf-view-align-right))
+
+(add-hook 'doom-load-theme-hook 'update-pdf-colors 100) ;; depth=100 ensure last
+
+
+#+END_SRC
 * Themes and Fonts
 #+BEGIN_SRC emacs-lisp
 
@@ -48,28 +77,11 @@ Some functionality uses this to identify you, e.g. GPG configuration, email clie
 (tool-bar-mode -1)
 
 
-(global-hide-mode-line-mode 'toggle)
+(add-hook 'doom-switch-buffer-hook #'hide-mode-line-mode)
+;; (global-hide-mode-line-mode -1)
 (map! :leader :desc "Toggle Doom Mode Line" :g "d" (lambda () (interactive) (global-hide-mode-line-mode 'toggle)))
 #+END_SRC
 
-** PDF themes
-#+BEGIN_SRC emacs-lisp
-(defun update-pdf-colors ()
-  (interactive)
-  (setq pdf-view-midnight-colors
-        (cons (face-attribute 'default :foreground) (face-attribute 'default :background))))
-
-
-;; (add-hook 'pdf-view-mode-hook 'pdf-view-midnight-minor-mode)
-
-(after! pdf-tools (update-pdf-colors))
-
-(map! :mode pdf-view-mode (:n "C-h" 'pdf-view-align-left) (:n "C-l" 'pdf-view-align-right))
-
-(add-hook 'doom-load-theme-hook 'update-pdf-colors 100) ;; depth=100 ensure last
-
-
-#+END_SRC
 
 * Editor
 Enter to insert new line in normal mode
@@ -107,6 +119,8 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 
 (map! :n "M-RET" #'(lambda () (interactive) (+evil/insert-newline-above 1) (evil-next-line)))
 (map! :n "RET" #'(lambda () (interactive) (+evil/insert-newline-below 1) (evil-next-line)))
+
+(remove-hook 'doom-first-buffer-hook #'smartparens-global-mode)
 
 (use-package! julia-quail)
 #+end_src
@@ -181,7 +195,6 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 
 * Dashboard
 #+BEGIN_SRC emacs-lisp
-
 (defun snt/s-truncate (LEN STR)
   " like s-truncate but adds spaces if the string is shorter than LEN"
   (let ((stem (s-truncate LEN STR)))
@@ -196,6 +209,7 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
   (let ((output (car (read-from-string (concat "(" (shell-command-to-string "mu find flag:unread --format=sexp") ")")))))
     (if (listp (car output)) output '())))
 
+
 (defun snt/dashboard-insert-mail (list-size)
     (let ((data (snt/get-new-msgs)))
         (dashboard-insert-section
@@ -203,9 +217,9 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
             ;; (butlast msgs (- (length msgs) list-size))
             (butlast data (- (length data) list-size))
             list-size
-            'custom
+            'mail
             "m"
-            `(lambda (&rest _) (mu4e-view-message-with-message-id (plist-get el :message-id)))
+            `(lambda (&rest _) (mu4e-view-message-with-message-id (plist-get ',el :message-id)))
             (format "%s" (snt/parse-msg el)))))
 
 
@@ -225,15 +239,17 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
     (setq dashboard-items
           '(
             (recents . 10)
-            (agenda . 15 )
             (projects . 5)
+            (agenda . 15)
             (mail . 5)))
 
+    (setq dashboard-match-agenda-entry "/+TODO")
     (setq dashboard-agenda-time-string-format "%a, %b %d")
     (setq dashboard-agenda-time-string-format "%a, %b %d")
     (setq dashboard-agenda-prefix-format "(%(projectile-project-name)) %i %-12:c %s ")
     (setq dashboard-agenda-sort-strategy '(time-up todo-state-up))
     :config
+    (dashboard-modify-heading-icons '((mail . "mail")))
     (add-to-list 'dashboard-item-generators  '(mail . snt/dashboard-insert-mail))
     (dashboard-setup-startup-hook)
     (setq dashboard-set-footer nil)
@@ -620,6 +636,9 @@ apps are not started from a shell."
 ;;
 
 #+END_SRC
+
+#+RESULTS:
+| (lambda nil (set-input-method 'julia)) | julia-repl-mode |
 
 * Flyspell
 #+BEGIN_SRC emacs-lisp

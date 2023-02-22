@@ -48,8 +48,7 @@ settings:
     global: 30000
   editor.command:
     global:
-    - emacsclient
-    - -c
+    - e
     - '{file}'
   fileselect.folder.command:
     global:

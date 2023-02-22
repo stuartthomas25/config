@@ -7,7 +7,7 @@ else
 fi
 
 if [ -z $@ ]; then
-    $stem -e '(dashboard-mode)'
+    $stem -e '(dashboard-mode)' &
 else
-    $stem $@
+    $stem "$@" &
 fi

@@ -22,6 +22,7 @@ import XMonad.Layout.Spacing
 import System.Exit
 import XMonad.Prompt.Pass
 
+import System.Process
 import Data.Monoid
 import Data.Maybe (fromJust)
 
@@ -31,11 +32,29 @@ import qualified Data.Map        as M
 #+end_src
 
 The preferred terminal program, which is used in a binding below and by
-certain contrib modules.
+certain contrib modules .
 * Defaults
 #+begin_src haskell
 myTerminal      = "alacritty"
-myEmacs         = "export DBUS_SESSION_BUS_ADDRESS=$(systemctl --user show-environment | grep DBUS_SESSION_BUS_ADDRESS | cut -d= -f 2-); /usr/bin/emacs --daemon &"
+-- myEmacs         = "export DBUS_SESSION_BUS_ADDRESS=$(systemctl --user show-environment | grep DBUS_SESSION_BUS_ADDRESS | cut -d= -f 2-); /usr/bin/emacs --daemon &"
+myQuitEmacs = "emacsclient -e \"(save-buffers-kill-emacs)\""
+-- myEmacsServer         = "/usr/bin/emacs --daemon &"
+myEmacsServer = "(if $(emacsclient -a true -e \"'false\"); then /usr/bin/emacs --daemon; fi) &" -- if no server, make one
+
+-- myExit = do {
+--   emacsstatus <- io $ readProcess "emacsclient" ["-e", "(save-buffers-kill-emacs)"] "";
+--   }
+
+myExit = do {
+  x <- liftIO $ readProcess "emacsclient" ["-e", "(save-buffers-kill-emacs)"] [];
+  io $ putStrLn $ "<" ++ x ++ ">";
+  if (null x) then io (exitWith ExitSuccess) else return ()
+}
+
+  -- spawn $ "notify-send \"" ++ emacsstatus ++ "\" -t 1000"
+  -- if (emacsstatus == "")
+  --   then io (exitWith ExitSuccess)
+  --   else return ()
 
 -- Whether focus follows the mouse pointer.
 myFocusFollowsMouse :: Bool
@@ -48,7 +67,6 @@ myClickJustFocuses = False
 -- Width of the window border in pixels.
 --
 myBorderWidth   = 1
-
 #+end_src
 
 modMask lets you specify which modkey you want to use. The default
@@ -68,7 +86,6 @@ of this list.
 A tagging example:
 
 > workspaces = ["web", "irc", "code" ] ++ map show [4..9]
-
 
 #+begin_src haskell
 -- myWorkspaces    = ["1","2","3","4","5","6","7","8","9"]
@@ -91,7 +108,6 @@ myFocusedBorderColor = "#ffffff"
 Key bindings. Add, modify or remove key bindings here.
 
 #+begin_src haskell
-
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- launch a terminal
@@ -104,96 +120,40 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm .|. mod1Mask , xK_minus), spawn "~/bin/e")
     , ((modm .|. mod1Mask , xK_0), spawn "qutebrowser")
     , ((modm .|. mod1Mask , xK_9), spawn "flatpak run com.spotify.Client")
-
-    -- launch toggl
-    , ((modm .|. shiftMask, xK_t     ), spawn "flatpak run com.toggl.TogglDesktop")
-
-    -- restart emacs
-    , ((modm .|. shiftMask, xK_b     ), spawn $ "bluetoothctl connect F0:1D:BC:F6:94:37")
-
-    -- connect bluetooth headphones
-    , ((modm .|. shiftMask, xK_e     ), spawn $ "killall emacs;" ++ myEmacs)
-
+    , ((modm .|. shiftMask, xK_t     ), spawn "flatpak run com.toggl.TogglDesktop") -- launch toggl
+    , ((modm .|. shiftMask, xK_b     ), spawn $ "bluetoothctl connect F0:1D:BC:F6:94:37")  -- connect bluetooth headphones
+    , ((modm .|. shiftMask, xK_e     ), spawn $ myQuitEmacs ++ "; " ++ myEmacsServer) -- restart emacs
     , ((modm .|. shiftMask, xK_p     ), passTypePrompt def)
-
     , ((modm              , xK_f     ), spawn "/home/stuart/bin/flipscreen")
-
-    , ((modm              , xK_f     ), spawn "/home/stuart/bin/flipscreen")
-
     , ((modm              , xK_s     ), spawn "systemctl suspend")
-
-
     , ((modm              , xK_o     ), spawn "xmodmap ~/.Xmodmap && notify-send \"xmodmap loaded\" -t 1000")
-
-
     , ((modm .|. shiftMask, xK_s     ), spawn "sleep 1; xset dpms force off")
+    , ((modm              , xK_g     ), spawn "~/bin/togglcolor") -- toggl light/dark mode
+    , ((modm              , xK_q     ), kill) -- close focused window
 
-    -- toggl light/dark mode
-    , ((modm              , xK_g     ), spawn "~/bin/togglcolor")
-
-    -- close focused window
-    , ((modm              , xK_q     ), kill)
-
-     -- Rotate through the available layout algorithms
-    , ((modm,               xK_p ), sendMessage NextLayout)
-
-    --  Reset the layouts on the current workspace to default
-    , ((modm .|. shiftMask, xK_space ), setLayout $ XMonad.layoutHook conf)
-
-    -- Resize viewed windows to the correct size
-    , ((modm,               xK_n     ), refresh)
-
-    -- Move focus to the next window
-    , ((modm,               xK_Tab   ), windows W.focusDown)
-
-    -- Move focus to the next window
-    , ((modm,               xK_j     ), windows W.focusDown)
-
-    -- Move focus to the previous window
-    , ((modm,               xK_k     ), windows W.focusUp  )
-
-    -- Move focus to the next screen
-    , ((modm .|. shiftMask, xK_j     ), prevScreen)
-
-    -- Move focus to the previous screen
-    , ((modm .|. shiftMask, xK_k     ), nextScreen )
-
-    -- Swap the focused window and the master window
-    , ((modm,               xK_Return), windows W.swapMaster)
-
-    -- -- Swap the focused window with the next window
-    -- , ((modm .|. shiftMask, xK_j     ), windows W.swapDown  )
-
-    -- -- Swap the focused window with the previous window
-    -- , ((modm .|. shiftMask, xK_k     ), windows W.swapUp    )
-
-    -- Shrink the master area
-    , ((modm,               xK_h     ), sendMessage Shrink)
-
-    -- Expand the master area
-    , ((modm,               xK_l     ), sendMessage Expand)
-
-    -- Push window back into tiling
-    , ((modm,               xK_t     ), withFocused $ windows . W.sink)
-
-    -- Increment the number of windows in the master area
-    , ((modm              , xK_comma ), sendMessage (IncMasterN 1))
-
-    -- Deincrement the number of windows in the master area
-    , ((modm              , xK_period), sendMessage (IncMasterN (-1)))
-
+    , ((modm,               xK_p ), sendMessage NextLayout) -- Rotate through the available layout algorithms
+    , ((modm .|. shiftMask, xK_space ), setLayout $ XMonad.layoutHook conf) --  Reset the layouts on the current workspace to default
+    , ((modm,               xK_n     ), refresh) -- Resize viewed windows to the correct size
+    , ((modm,               xK_Tab   ), windows W.focusDown) -- Move focus to the next window
+    , ((modm,               xK_j     ), windows W.focusDown) -- Move focus to the next window
+    , ((modm,               xK_k     ), windows W.focusUp  ) -- Move focus to the previous window
+    , ((modm .|. shiftMask, xK_j     ), prevScreen) -- Move focus to the next screen
+    , ((modm .|. shiftMask, xK_k     ), nextScreen ) -- Move focus to the previous screen
+    , ((modm,               xK_Return), windows W.swapMaster) -- Swap the focused window and the master window
+    -- , ((modm .|. shiftMask, xK_j     ), windows W.swapDown  ) -- Swap the focused window with the next window
+    -- , ((modm .|. shiftMask, xK_k     ), windows W.swapUp    ) -- Swap the focused window with the previous window
+    , ((modm,               xK_h     ), sendMessage Shrink) -- Shrink the master area
+    , ((modm,               xK_l     ), sendMessage Expand) -- Expand the master area
+    , ((modm,               xK_t     ), withFocused $ windows . W.sink) -- Push window back into tiling
+    , ((modm              , xK_comma ), sendMessage (IncMasterN 1)) -- Increment the number of windows in the master area
+    , ((modm              , xK_period), sendMessage (IncMasterN (-1))) -- Deincrement the number of windows in the master area
     -- Toggle the status bar gap
     -- Use this binding with avoidStruts from Hooks.ManageDocks.
     -- See also the statusBar function from Hooks.DynamicLog.
     --
     -- , ((modm              , xK_b     ), sendMessage ToggleStruts)
-
-    -- Quit xmonad
-    , ((modm .|. shiftMask, xK_q     ), io (exitWith ExitSuccess))
-
-    -- Restart xmonad
-    , ((modm .|. shiftMask, xK_c     ), spawn "killall xmobar; killall picom; xmonad --recompile; xmonad --restart")
-
+    , ((modm .|. shiftMask, xK_q     ), myExit) -- Quit xmonad
+    , ((modm .|. shiftMask, xK_c     ), spawn "xmonad --recompile; xmonad --restart") -- Restart xmonad
     -- Run xmessage with a summary of the default keybindings (useful for beginners)
     -- , ((modm .|. shiftMask, xK_slash ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
     ]
@@ -325,9 +285,9 @@ myLogHook = return ()
 -- By default, do nothing.
 myStartupHook = do
     spawnOnce "nitrogen --restore &"
-    spawn "dunst -conf /home/stuart/.config/dunstrc &"
+    spawn "dunst &"
     -- spawn "picom &"
-    spawnOnce myEmacs
+    spawnOnce myEmacsServer
     -- spawnOnce "dropbox start &"
     setWMName "LG3D"
 

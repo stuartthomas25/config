@@ -25,6 +25,9 @@ import XMonad.Prompt.Pass
 import System.Process
 import Data.Monoid
 import Data.Maybe (fromJust)
+import Control.Monad
+
+import System.IO
 
 
 import qualified XMonad.StackSet as W
@@ -41,20 +44,15 @@ myQuitEmacs = "emacsclient -e \"(save-buffers-kill-emacs)\""
 -- myEmacsServer         = "/usr/bin/emacs --daemon &"
 myEmacsServer = "(if $(emacsclient -a true -e \"'false\"); then /usr/bin/emacs --daemon; fi) &" -- if no server, make one
 
--- myExit = do {
---   emacsstatus <- io $ readProcess "emacsclient" ["-e", "(save-buffers-kill-emacs)"] "";
---   }
-
-myExit = do {
-  x <- liftIO $ readProcess "emacsclient" ["-e", "(save-buffers-kill-emacs)"] [];
-  io $ putStrLn $ "<" ++ x ++ ">";
-  if (null x) then io (exitWith ExitSuccess) else return ()
-}
-
-  -- spawn $ "notify-send \"" ++ emacsstatus ++ "\" -t 1000"
-  -- if (emacsstatus == "")
-  --   then io (exitWith ExitSuccess)
-  --   else return ()
+myExit = io $ do
+    uninstallSignalHandlers
+    (_, Just ho1, _, hp1) <- createProcess (shell "emacsclient -a true -e \"(save-buffers-kill-emacs)\""){ std_out=CreatePipe }
+    sOut <- hGetContents ho1
+    r <- waitForProcess hp1
+    installSignalHandlers
+    case (r,sOut) of
+        (ExitSuccess,"") -> exitWith ExitSuccess
+        _ -> hPutStrLn stderr "Emacs prohibited logout"
 
 -- Whether focus follows the mouse pointer.
 myFocusFollowsMouse :: Bool
@@ -68,6 +66,18 @@ myClickJustFocuses = False
 --
 myBorderWidth   = 1
 #+end_src
+
+
+#+begin_src haskell :tangle no
+import System.IO
+import System.Process
+import System.Exit
+
+do { (_, Just ho1, _, hp1) <- createProcess (shell "emacsclient -a true -e \"(save-buffers-kill-emacs)\""){ std_out=CreatePipe }; sOut <- hGetContents ho1; r <- waitForProcess hp1; (case (r,sOut) of (ExitSuccess,"") -> putStrLn "Logging out!"; _ -> putStrLn "Emacs prohibited logout")}
+#+end_src
+
+#+RESULTS:
+: Prelude System.IO System.Process System.Exit> Prelude System.IO System.Process System.Exit> Prelude System.IO System.Process System.Exit> *ERROR*: QuitEmacs prohibited logout
 
 modMask lets you specify which modkey you want to use. The default
 is mod1Mask ("left alt").  You may also consider using mod3Mask
@@ -108,6 +118,7 @@ myFocusedBorderColor = "#ffffff"
 Key bindings. Add, modify or remove key bindings here.
 
 #+begin_src haskell
+togglExec = "~/miniconda3/bin/toggl"
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- launch a terminal
@@ -120,7 +131,9 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm .|. mod1Mask , xK_minus), spawn "~/bin/e")
     , ((modm .|. mod1Mask , xK_0), spawn "qutebrowser")
     , ((modm .|. mod1Mask , xK_9), spawn "flatpak run com.spotify.Client")
-    , ((modm .|. shiftMask, xK_t     ), spawn "flatpak run com.toggl.TogglDesktop") -- launch toggl
+    , ((modm .|. shiftMask, xK_t     ), spawn $ togglExec ++ " www") -- launch toggl
+    , ((modm,               xK_semicolon ), spawn "~/bin/mytoggl startstop") -- start/stop toggl
+    , ((modm .|. shiftMask, xK_semicolon ), spawn "~/bin/mytoggl status") -- start/stop toggl
     , ((modm .|. shiftMask, xK_b     ), spawn $ "bluetoothctl connect F0:1D:BC:F6:94:37")  -- connect bluetooth headphones
     , ((modm .|. shiftMask, xK_e     ), spawn $ myQuitEmacs ++ "; " ++ myEmacsServer) -- restart emacs
     , ((modm .|. shiftMask, xK_p     ), passTypePrompt def)

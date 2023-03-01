@@ -1,0 +1,45 @@
+#!/bin/zsh
+
+TOGGL_EXEC=$HOME/miniconda3/bin/toggl
+
+current_info=$($TOGGL_EXEC --no-header now)
+projectname=$(echo $current_info | sed -n "4p" | sed -e 's/ (#\w\+)//')
+case $1 in
+    startstop)
+        if [[ -z $projectname ]]; then
+            if $TOGGL_EXEC continue; then
+                projectname=$($TOGGL_EXEC --no-header now | sed -n "4p" | sed -e 's/ (#\w\+)//')
+                notify-send "Resuming \"$projectname\"..." "" -t 5000
+            else
+                notify-send -u critical "Toggl Failed" "" -t 5000
+            fi
+        else
+            # stop timer
+            time=$(echo $current_info | sed -n "3p")
+            if $TOGGL_EXEC stop; then
+                notify-send "Stopping \"$projectname\"..." "Elapsed time: $time" -t 5000
+            else
+                notify-send -u critical "Toggl Failed" "" -t 5000
+            fi
+        fi
+        ;;
+    status)
+        if ! [[ -z $projectname ]]; then
+            time=$(echo $current_info | sed -n "3p")
+            notify-send "\"$projectname\" is running" "Elapsed time: $time" -t 5000
+        else
+
+            notify-send "Nothing is running!" -t 5000
+        fi
+        ;;
+    watch)
+        if ! [[ -z $projectname ]]; then
+            time=$(echo $current_info | sed -n "3p")
+            if [[ "$time" > "0:25:00" ]]; then
+                notify-send -u critical "Take a Break!" "Project \"$projectname\" has reached $time" -t 60000
+            fi
+        fi
+        ;;
+    *)
+        echo "usage: mytoggl (startstop|status|watch)"
+esac

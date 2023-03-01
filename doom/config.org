@@ -24,9 +24,6 @@ Some functionality uses this to identify you, e.g. GPG configuration, email clie
   (revert-buffer))
 #+end_src
 
-#+RESULTS:
-: snt/pdf-relabel
-
 ** PDF themes
 #+BEGIN_SRC emacs-lisp
 (defun update-pdf-colors ()
@@ -473,7 +470,7 @@ Make sure PDF Tools is the first viewing option on the list
 
 * DOI System
 #+BEGIN_SRC emacs-lisp
-(defconst doi-regex "10\\.[0-9]\\{4,5\\}\\/[^;, ]+")
+(defconst doi-regex "10\\.[0-9]\\{4,5\\}\\/[^;, {}]+")
 
 (defun my/doi-to-reference ()
   (interactive)
@@ -524,22 +521,23 @@ STATUS: the status"
 
 (defun open-doi (doi &optional fname)
   (interactive "sDOI: ")
-  (url-retrieve (url-encode-url (concat "http://api.crossref.org/v1/works/" doi "\n")) 'callback (list fname) t t))
+  (message "Opening DOI: %s" doi)
+  (url-retrieve (url-encode-url (format "http://api.crossref.org/v1/works/%s\n" doi)) 'callback (list fname) t t))
 
 (defun open-arxiv (arxivid &optional fname)
   (interactive "sArXiv Id: ")
-  (message "Opening arXiv pdf")
-  (display-pdf (concat "https://arxiv.org/pdf/" arxivid ".pdf") fname))
+  (message "Opening ArXiv article: %s" arxivid)
+  (display-pdf (format "https://arxiv.org/pdf/%s.pdf" arxivid) fname))
 
 
 (defun open-link (uri &optional fname default-open-function)
   "Open a doi link.
  URI: the uri"
   (interactive "sURI: ")
-  (message "%s" (concat "Opening link: " uri))
+  (message "Opening link: %s" uri)
   (unless default-open-function (setq default-open-function #'browse-url-default-browser))
   (cond ((string-match doi-regex uri) (open-doi (match-string 0 uri) fname))
-        ((string-match doi-regex uri) (open-doi (concat "10.1038/" (match-string 1 uri)) fname))
+        ;; ((string-match doi-regex uri) (open-doi (concat "10.1038/" (match-string 1 uri)) fname))
         ((string-match "[0-9]\\{4\\}\\.[0-9]\\{5\\}\\(v[0-9]+\\)*$" uri) (open-arxiv (match-string 0 uri) fname))
         ((string-match "arxiv:\\([-a-z]+\\/[0-9]\\{7\\}\\(v[0-9]+\\)*\\)$" uri) (open-arxiv (match-string 1 uri) fname)) ;;old style, identifier
         ((string-match "arxiv\\.org\\/abs\\/\\([-a-z]+\\/[0-9]\\{7\\}\\(v[0-9]+\\)*\\)$" uri) (open-arxiv (match-string 1 uri) fname)) ;; old style, url
@@ -614,10 +612,15 @@ apps are not started from a shell."
 (require 'vterm)
 (use-package! ob-julia-vterm)
 (add-to-list 'org-babel-load-languages '(julia-vterm . t))
+(add-to-list 'org-babel-load-languages '(bibtex . t))
 (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages)
 
 (after! ob-julia
     (defalias 'org-babel-execute:julia 'org-babel-execute:julia-vterm))
+
+(defun org-babel-execute:bibtex (BODY PARAMS)
+  (open-link BODY)
+  nil)
 
 
 ;; (defun my/ob-julia-callback (arg)

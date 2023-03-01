@@ -1,0 +1,21 @@
+#!/bin/bash
+if [ -z "$1" ]; then
+    echo "usage: pushover [title] message"
+    exit 0
+fi
+
+if [ -z "$2" ]; then
+    message=$1
+    title="Roxie"
+else
+    message=$2
+    title=$1
+fi
+
+
+curl -s \
+    --form-string "token=am8ftytbuomv1umtact8vi46mded97" \
+    --form-string "user=unnei5ppx3i7kq9k8q1z7gzfim7ugv" \
+    --form-string "message=$message" \
+    --form-string "title=$title" \
+    https://api.pushover.net/1/messages.json

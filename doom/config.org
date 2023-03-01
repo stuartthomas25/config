@@ -114,6 +114,9 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 (map! :leader :desc "Next Tab" :g "l" #'+workspace/switch-right)
 (map! :leader :desc "Previous Tab" :g "L" #'+workspace/switch-left)
 
+(map! :leader :desc "Swap Workspace Left" :g "TAB L" #'+workspace/swap-right)
+(map! :leader :desc "Swap Workspace Right" :g "TAB H" #'+workspace/swap-left)
+
 (map! :n "M-RET" #'(lambda () (interactive) (+evil/insert-newline-above 1) (evil-next-line)))
 (map! :n "RET" #'(lambda () (interactive) (+evil/insert-newline-below 1) (evil-next-line)))
 

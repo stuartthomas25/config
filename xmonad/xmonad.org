@@ -139,11 +139,10 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm .|. shiftMask, xK_p     ), passTypePrompt def)
     , ((modm              , xK_f     ), spawn "/home/stuart/bin/flipscreen")
     , ((modm              , xK_s     ), spawn "systemctl suspend")
-    , ((modm              , xK_o     ), spawn "xmodmap ~/.Xmodmap && notify-send \"xmodmap loaded\" -t 1000")
     , ((modm .|. shiftMask, xK_s     ), spawn "sleep 1; xset dpms force off")
+    , ((modm              , xK_o     ), spawn "xmodmap ~/.Xmodmap && notify-send \"xmodmap loaded\" -t 1000")
     , ((modm              , xK_g     ), spawn "~/bin/togglcolor") -- toggl light/dark mode
     , ((modm              , xK_q     ), kill) -- close focused window
-
     , ((modm,               xK_p ), sendMessage NextLayout) -- Rotate through the available layout algorithms
     , ((modm .|. shiftMask, xK_space ), setLayout $ XMonad.layoutHook conf) --  Reset the layouts on the current workspace to default
     , ((modm,               xK_n     ), refresh) -- Resize viewed windows to the correct size

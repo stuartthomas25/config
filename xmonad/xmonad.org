@@ -122,48 +122,51 @@ data KeyBinding = KeyBinding {
 togglExec = "~/miniconda3/bin/toggl"
 
 myKeyBindings conf@(XConfig {XMonad.modMask = modm}) =
-    [ KeyBinding (modm              )     xK_space  "Launch dmenu" $ spawn "dmenu_run_history -sb \"#fe8019\" -i"
-    , KeyBinding (modm .|. mod1Mask )     xK_equal  "Launch Terminal" $ spawn "alacritty"
-    , KeyBinding (modm .|. mod1Mask )     xK_minus "Launch Emacs" $ spawn "~/bin/e"
-    , KeyBinding (modm .|. mod1Mask )     xK_0     "Launch qutebrowser" $ spawn "qutebrowser"
-    , KeyBinding (modm .|. mod1Mask )     xK_9    "Launch Spotify" $ spawn "flatpak run com.spotify.Client"
-    , KeyBinding (modm .|. shiftMask)     xK_t    "launch toggl" $ spawn $ togglExec ++ " www"
-    , KeyBinding (modm)                   xK_semicolon "start/stop toggl" $ spawn "~/bin/mytoggl startstop"
-    , KeyBinding (modm .|. shiftMask)     xK_semicolon "start/stop toggl" $ spawn "~/bin/mytoggl status"
-    , KeyBinding (modm .|. shiftMask)     xK_b    "connect bluetooth headphones" $ spawn $ "bluetoothctl connect F0:1D:BC:F6:94:37"
-    , KeyBinding (modm .|. shiftMask)     xK_e    "restart emacs" $ spawn $ myQuitEmacs ++ "; " ++ myEmacsServer
-    , KeyBinding (modm .|. shiftMask)     xK_p    "Open Passwords" $ passTypePrompt def
-    , KeyBinding (modm              )     xK_f    "Rotate main monitor" $ spawn "/home/stuart/bin/flipscreen"
-    , KeyBinding (modm              )     xK_s    "Sleep system" $ spawn "systemctl suspend"
-    , KeyBinding (modm .|. shiftMask)     xK_s    "Sleep display" $ spawn "sleep 1; xset dpms force off"
-    , KeyBinding (modm              )     xK_o    "Reload xmodmap" $ spawn "xmodmap ~/.Xmodmap && notify-send \"xmodmap loaded\" -t 1000"
-    , KeyBinding (modm              )     xK_g    "toggl light/dark mode" $ spawn "~/bin/togglcolor"
-    , KeyBinding (modm              )     xK_q    "close focused window" $ kill
-    , KeyBinding (modm)                   xK_p "Rotate through the available layout algorithms" $ sendMessage NextLayout
-    , KeyBinding (modm .|. shiftMask)     xK_space "Reset the layouts on the current workspace to default" $ setLayout $ XMonad.layoutHook conf
-    , KeyBinding (modm)                   xK_n    "Resize viewed windows to the correct size" $ refresh
-    , KeyBinding (modm)                   xK_Tab  "Move focus to the next window" $ windows W.focusDown
-    , KeyBinding (modm)                   xK_j    "Move focus to the next window" $ windows W.focusDown
-    , KeyBinding (modm)                   xK_k    "Move focus to the previous window" $ windows W.focusUp
-    , KeyBinding (modm .|. shiftMask)     xK_j    "Move focus to the next screen" $ prevScreen
-    , KeyBinding (modm .|. shiftMask)     xK_k    "Move focus to the previous screen" $ nextScreen
-    , KeyBinding (modm)                   xK_Return "Swap the focused window and the master window" $ windows W.swapMaster
- -- , KeyBinding ((modm .|. shiftMask)    xK_j    "Swap the focused window with the next window" $ windows W.swapDown
- -- , KeyBinding ((modm .|. shiftMask)    xK_k    "Swap the focused window with the previous window" $ windows W.swapUp
-    , KeyBinding (modm)                   xK_h    "Shrink the master area" $ sendMessage Shrink
-    , KeyBinding (modm)                   xK_l    "Expand the master area" $ sendMessage Expand
-    , KeyBinding (modm)                   xK_t    "Push window back into tiling" $ withFocused $ windows . W.sink
-    , KeyBinding (modm              )     xK_comma "Increment the number of windows in the master area" $ sendMessage (IncMasterN 1)
-    , KeyBinding (modm              )     xK_period  "Deincrement the number of windows in the master area" $ sendMessage (IncMasterN (-1))
- -- , KeyBinding (modm              )     xK_b    "Toggle the status bar gap" $ sendMessage ToggleStruts
- -- , KeyBinding (modm .|. shiftMask)     xK_q    "Quit xmonad" $ myExit
-    , KeyBinding (modm .|. shiftMask)     xK_c    "Restart xmonad" $ spawn "xmonad --recompile; xmonad --restart"
-    , KeyBinding (modm .|. shiftMask)     xK_slash "Display this help popup" $ spawn ("echo \"" ++ (help conf) ++ "\" | xmessage -file -")
+    [ KeyBinding modm                     xK_space       "Launch dmenu"                                     $    spawn "dmenu_run_history -sb \"#fe8019\" -i"
+    , KeyBinding (modm .|. mod1Mask )     xK_equal       "Launch Terminal"                                  $    spawn "alacritty"
+    , KeyBinding (modm .|. mod1Mask )     xK_minus       "Launch Emacs"                                     $    spawn "~/bin/e"
+    , KeyBinding (modm .|. mod1Mask )     xK_0           "Launch qutebrowser"                               $    spawn "qutebrowser"
+    , KeyBinding (modm .|. mod1Mask )     xK_9           "Launch Spotify"                                   $    spawn "flatpak run com.spotify.Client"
+    , KeyBinding (modm .|. shiftMask)     xK_t           "launch toggl"                                     $    spawn $ togglExec ++ " www"
+    , KeyBinding modm                     xK_semicolon   "start/stop toggl"                                 $    spawn "~/bin/mytoggl startstop"
+    , KeyBinding (modm .|. shiftMask)     xK_semicolon   "start/stop toggl"                                 $    spawn "~/bin/mytoggl status"
+    , KeyBinding (modm .|. shiftMask)     xK_b           "connect headphones"                               $    spawn $ "bluetoothctl connect F0:1D:BC:F6:94:37"
+    , KeyBinding (modm .|. shiftMask)     xK_e           "restart emacs"                                    $    spawn $ myQuitEmacs ++ "; " ++ myEmacsServer
+    , KeyBinding (modm .|. shiftMask)     xK_p           "Open Passwords"                                   $    passTypePrompt def
+    , KeyBinding modm                     xK_f           "Rotate main monitor"                              $    spawn "/home/stuart/bin/flipscreen"
+    , KeyBinding modm                     xK_s           "Sleep system"                                     $    spawn "systemctl suspend"
+    , KeyBinding (modm .|. shiftMask)     xK_s           "Sleep display"                                    $    spawn "sleep 1; xset dpms force off"
+    , KeyBinding modm                     xK_o           "Reload xmodmap"                                   $    spawn "xmodmap ~/.Xmodmap && notify-send \"xmodmap loaded\" -t 1000"
+    , KeyBinding modm                     xK_g           "toggl dark mode"                                  $    spawn "~/bin/togglcolor"
+    , KeyBinding modm                     xK_q           "close focused window"                             $    kill
+    , KeyBinding modm                     xK_p           "Rotate through layouts"                           $    sendMessage NextLayout
+    , KeyBinding (modm .|. shiftMask)     xK_space       "Reset layouts"                                    $    setLayout $ XMonad.layoutHook conf
+    , KeyBinding modm                     xK_n           "Resize windows to default"                        $    refresh
+    , KeyBinding modm                     xK_Tab         "Focus next window"                                $    windows W.focusDown
+    , KeyBinding modm                     xK_j           "Focus next window"                                $    windows W.focusDown
+    , KeyBinding modm                     xK_k           "Focus previous window"                            $    windows W.focusUp
+    , KeyBinding (modm .|. shiftMask)     xK_j           "Focus next screen"                                $    prevScreen
+    , KeyBinding (modm .|. shiftMask)     xK_k           "Focus previous screen"                            $    nextScreen
+    , KeyBinding modm                     xK_Return      "Swap master window"                               $    windows W.swapMaster
+ -- , KeyBinding ((modm .|. shiftMask)    xK_j           "Swap the focused window with the next window"     $    windows W.swapDown
+ -- , KeyBinding ((modm .|. shiftMask)    xK_k           "Swap the focused window with the previous window" $    windows W.swapUp
+    , KeyBinding modm                     xK_h           "Shrink the master area"                           $    sendMessage Shrink
+    , KeyBinding modm                     xK_l           "Expand the master area"                           $    sendMessage Expand
+    , KeyBinding modm                     xK_t           "Push window back into tiling"                     $    withFocused $ windows . W.sink
+    , KeyBinding modm                     xK_comma       "Increment number of master windows"               $    sendMessage (IncMasterN 1)
+    , KeyBinding modm                     xK_period      "Deincrement number of master windows"             $    sendMessage (IncMasterN (-1))
+ -- , KeyBinding modm                     xK_b           "Toggle the status bar gap"                        $    sendMessage ToggleStruts
+ -- , KeyBinding (modm .|. shiftMask)     xK_q           "Quit xmonad"                                      $    myExit
+    , KeyBinding (modm .|. shiftMask)     xK_c           "Restart xmonad"                                   $    spawn "xmonad --recompile; xmonad --restart"
+    , KeyBinding (modm .|. shiftMask)     xK_slash       "Display this help popup"                          $    spawn $ "notify-send --wait \"XMonad Help\" \"" ++ (help conf) ++ "\""
+  --, KeyBinding (modm .|. shiftMask)     xK_slash       "Display this help popup"                          $    spawn ("echo \"" ++ (help conf) ++ "\" | xmessage -file -")
     ]
     ++
-    [KeyBinding (m .|. modm) k ("Move to window " ++ show i) $ windows $ f i
-        | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
-        , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
+    [KeyBinding modm k ("Move to space" ++ show i) $ windows $ W.greedyView i
+        | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]]
+    ++
+    [KeyBinding (shiftMask .|. modm) k ("Move window to space" ++ show i) $ windows $ W.shift i
+        | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]]
 
 myKeys conf = M.fromList $ map (\x -> ((mask x, key x), command x)) $ myKeyBindings conf
 #+end_src
@@ -351,5 +354,12 @@ keymaskToString msk =
     | otherwise    = a
 
 
-help conf = unlines $ map (\kb -> (keymaskToString $ mask kb) ++  (keysymToString $ key kb) ++ "  --  " ++ (desc kb)) $ myKeyBindings conf
+columnWidth = 20
+help conf = unlines $ map formatkb $ myKeyBindings conf
+        where
+            -- formatkb kb =  keyStr ++ (take (length keyStr - columnWidth) (repeat ' ')) ++ "  --  " ++ (desc kb)
+            formatkb kb =  keyStr ++ (take (columnWidth - length keyStr) (repeat ' ')) ++ (desc kb)
+                where
+                  keyStr = (keymaskToString $ mask kb)  ++  (keysymToString $ key kb)
+
 #+end_src

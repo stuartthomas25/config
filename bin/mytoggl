@@ -17,6 +17,7 @@ case $1 in
             # stop timer
             time=$(echo $current_info | sed -n "3p")
             if $TOGGL_EXEC stop; then
+                dunstctl close
                 notify-send "Stopping \"$projectname\"..." "Elapsed time: $time" -t 5000
             else
                 notify-send -u critical "Toggl Failed" "" -t 5000

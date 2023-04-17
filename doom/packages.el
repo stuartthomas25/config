@@ -64,7 +64,7 @@
 ;; (package! pdf-continuous-scroll-mode :recipe (
 ;;                                        :host github
 ;;                                        :repo "dalanicolai/pdf-continuous-scroll-mode.el"))
-(package! org-latex-impatient)
+;; (package! org-latex-impatient)
 ;; (package! ob-julia-vterm :recipe (:local-repo "~/Desktop/ob-julia-vterm.el"))
 (package! ob-julia-vterm) 
 (package! org-auto-tangle)

@@ -68,15 +68,16 @@ Custom logout function
 #+begin_src haskell
 killEmacsCommand = "(let ((f (car (frame-list)))) (select-frame-set-input-focus f) (save-buffers-kill-emacs))"
 
-myExit = io $ do
-    uninstallSignalHandlers
-    (_, Just ho1, _, hp1) <- createProcess (shell ("emacsclient -a true -e \""++killEmacsCommand++"\"")){ std_out=CreatePipe }
-    sOut <- hGetContents ho1
-    r <- waitForProcess hp1
-    installSignalHandlers
-    case (r,sOut) of
-        (ExitSuccess,"") -> exitWith ExitSuccess
-        _ -> hPutStrLn stderr "Emacs prohibited logout"
+-- myExit = io $ do
+--     uninstallSignalHandlers
+--     (_, Just ho1, _, hp1) <- createProcess (shell ("emacsclient -a true -e \""++killEmacsCommand++"\"")){ std_out=CreatePipe }
+--     sOut <- hGetContents ho1
+--     r <- waitForProcess hp1
+--     installSignalHandlers
+--     case (r,sOut) of
+--         (ExitSuccess,"") -> exitWith ExitSuccess
+--         _ -> hPutStrLn stderr "Emacs prohibited logout"
+myExit = io exitSuccess
 #+end_src
 
 modMask lets you specify which modkey you want to use. The default
@@ -286,7 +287,7 @@ myStartupHook = do
     spawnOnce "nitrogen --restore &"
     spawn "dunst &"
     -- spawn "picom &"
-    spawnOnce myEmacsServer
+    -- spawnOnce myEmacsServer
     -- spawnOnce "dropbox start &"
     setWMName "LG3D"
 

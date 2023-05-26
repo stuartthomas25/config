@@ -68,9 +68,13 @@
 ;; (package! ob-julia-vterm :recipe (:local-repo "~/Desktop/ob-julia-vterm.el"))
 (package! ob-julia-vterm) 
 (package! org-auto-tangle)
-(package! ewal)
+;; (package! ewal)
 (package! org-modern)
-(package! org-inline-pdf)
+;; (package! org-inline-pdf)
 (package! org-roam-server)
 (package! julia-quail :recipe (:host github :repo "stuartthomas25/julia-quail"))
 (package! polymode)
+(package! lean4-mode :recipe
+  (:host github
+   :repo "leanprover/lean4-mode"
+   :files ("*.el" "data")))

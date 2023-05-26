@@ -29,7 +29,8 @@ Some functionality uses this to identify you, e.g. GPG configuration, email clie
 (defun update-pdf-colors ()
   (interactive)
   (setq pdf-view-midnight-colors
-        (cons (face-attribute 'default :foreground) (face-attribute 'default :background))))
+        (cons (face-attribute 'default :foreground) (face-attribute 'default :background)))
+  (setq pdf-view-midnight-invert nil))
 
 
 ;; (add-hook 'pdf-view-mode-hook 'pdf-view-midnight-minor-mode)
@@ -39,9 +40,8 @@ Some functionality uses this to identify you, e.g. GPG configuration, email clie
 (map! :mode pdf-view-mode (:n "C-h" 'pdf-view-align-left) (:n "C-l" 'pdf-view-align-right))
 
 (add-hook 'doom-load-theme-hook 'update-pdf-colors 100) ;; depth=100 ensure last
-
-
 #+END_SRC
+
 * Themes and Fonts
 #+BEGIN_SRC emacs-lisp
 
@@ -183,7 +183,7 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 (use-package! org-modern)
 (add-hook 'org-mode-hook #'org-modern-mode)
 (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
-(add-hook 'org-mode-hook #'org-inline-pdf-mode)
+;; (add-hook 'org-mode-hook #'org-inline-pdf-mode)
 #+END_SRC
 
 ** Babel
@@ -368,9 +368,6 @@ Change keybinding to `mu4e`, not the doom wrapper
 
 * LaTeX
 #+BEGIN_SRC emacs-lisp
-(after! projectile
-        (add-to-list 'projectile-other-file-alist '("tex" "pdf"))
-        (add-to-list 'projectile-other-file-alist '("pdf" "tex")))
 
 (map! :desc "Search forward in PDF" :n "g P" #'pdf-sync-forward-search)
 
@@ -388,13 +385,13 @@ Change keybinding to `mu4e`, not the doom wrapper
                 (if (eq (point) (line-end-position))
                         (evil-backward-char 7)
                         (evil-backward-char 8))))
-(use-package! org-latex-impatient
-  :defer t
-  :hook (org-mode . org-latex-impatient-mode)
-  :init
-  (setq org-latex-impatient-tex2svg-bin
-        ;; location of tex2svg executable
-        "~/node_modules/mathjax-node-cli/bin/tex2svg"))
+;; (use-package! org-latex-impatient
+;;   :defer t
+;;   :hook (org-mode . org-latex-impatient-mode)
+;;   :init
+;;   (setq org-latex-impatient-tex2svg-bin
+;;         ;; location of tex2svg executable
+;;         "~/node_modules/mathjax-node-cli/bin/tex2svg"))
 
 (setq LaTeX-default-environment "equation")
 (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
@@ -674,5 +671,8 @@ apps are not started from a shell."
 #+begin_src emacs-lisp
 (after! projectile
   (setq projectile-indexing-method 'alien)
-  (setq projectile-enable-caching nil))
+  (setq projectile-enable-caching nil)
+  (add-to-list 'projectile-other-file-alist '("tex" "pdf"))
+  (add-to-list 'projectile-other-file-alist '("pdf" "tex"))
+  (setq projectile-project-search-path '(("~/Projects" . 3))))
 #+end_src

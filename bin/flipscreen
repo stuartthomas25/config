@@ -1,8 +1,12 @@
 #!/bin/bash
-if [[ "$(xrandr -q)" == *"left (normal"* ]]; then
-    source ~/.screenlayout/main.sh
+flagfile=~/.screenlayout/flipped
+
+if [ -f "$flagfile" ]; then
+    rm "$flagfile"
 else
-    source ~/.screenlayout/flipped.sh
+    touch "$flagfile"
 fi
+
+source ~/.screenlayout/main.sh
 nitrogen --restore
 

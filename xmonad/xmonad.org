@@ -43,22 +43,13 @@ import qualified Data.Map        as M
 The preferred terminal program, which is used in a binding below and by
 certain contrib modules .
 * Defaults
+Set the default apps
 #+begin_src haskell
 myTerminal      = "alacritty"
 -- myEmacs         = "export DBUS_SESSION_BUS_ADDRESS=$(systemctl --user show-environment | grep DBUS_SESSION_BUS_ADDRESS | cut -d= -f 2-); /usr/bin/emacs --daemon &"
 myQuitEmacs = "emacsclient -e \"(save-buffers-kill-emacs)\""
 -- myEmacsServer         = "/usr/bin/emacs --daemon &"
 myEmacsServer = "(if $(emacsclient -a true -e \"'false\"); then /usr/bin/emacs --daemon; fi) &" -- if no server, make one
-
--- myExit = io $ do
---     uninstallSignalHandlers
---     (_, Just ho1, _, hp1) <- createProcess (shell "emacsclient -a true -e \"(save-buffers-kill-emacs)\""){ std_out=CreatePipe }
---     sOut <- hGetContents ho1
---     r <- waitForProcess hp1
---     installSignalHandlers
---     case (r,sOut) of
---         (ExitSuccess,"") -> exitWith ExitSuccess
---         _ -> hPutStrLn stderr "Emacs prohibited logout"
 
 -- Whether focus follows the mouse pointer.
 myFocusFollowsMouse :: Bool
@@ -71,6 +62,22 @@ myClickJustFocuses = False
 -- Width of the window border in pixels.
 --
 myBorderWidth   = 1
+#+end_src
+
+Custom logout function
+#+begin_src haskell
+killEmacsCommand = "(let ((f (car (frame-list)))) (select-frame-set-input-focus f) (save-buffers-kill-emacs))"
+
+-- myExit = io $ do
+--     uninstallSignalHandlers
+--     (_, Just ho1, _, hp1) <- createProcess (shell ("emacsclient -a true -e \""++killEmacsCommand++"\"")){ std_out=CreatePipe }
+--     sOut <- hGetContents ho1
+--     r <- waitForProcess hp1
+--     installSignalHandlers
+--     case (r,sOut) of
+--         (ExitSuccess,"") -> exitWith ExitSuccess
+--         _ -> hPutStrLn stderr "Emacs prohibited logout"
+myExit = io exitSuccess
 #+end_src
 
 modMask lets you specify which modkey you want to use. The default
@@ -156,7 +163,7 @@ myKeyBindings conf@(XConfig {XMonad.modMask = modm}) =
     , KeyBinding modm                     xK_comma       "Increment number of master windows"               $    sendMessage (IncMasterN 1)
     , KeyBinding modm                     xK_period      "Deincrement number of master windows"             $    sendMessage (IncMasterN (-1))
  -- , KeyBinding modm                     xK_b           "Toggle the status bar gap"                        $    sendMessage ToggleStruts
- -- , KeyBinding (modm .|. shiftMask)     xK_q           "Quit xmonad"                                      $    myExit
+    , KeyBinding (modm .|. shiftMask)     xK_q           "Quit xmonad"                                      $    myExit
     , KeyBinding (modm .|. shiftMask)     xK_c           "Restart xmonad"                                   $    spawn "xmonad --recompile; xmonad --restart"
     , KeyBinding (modm .|. shiftMask)     xK_slash       "Display this help popup"                          $    spawn $ "notify-send --wait \"XMonad Help\" \"" ++ (help conf) ++ "\""
   --, KeyBinding (modm .|. shiftMask)     xK_slash       "Display this help popup"                          $    spawn ("echo \"" ++ (help conf) ++ "\" | xmessage -file -")
@@ -280,7 +287,7 @@ myStartupHook = do
     spawnOnce "nitrogen --restore &"
     spawn "dunst &"
     -- spawn "picom &"
-    spawnOnce myEmacsServer
+    -- spawnOnce myEmacsServer
     -- spawnOnce "dropbox start &"
     setWMName "LG3D"
 

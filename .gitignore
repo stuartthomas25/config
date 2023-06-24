@@ -1,8 +1,13 @@
-.DS_Store
-.idea
-*.log
-tmp/
+# ignore everything but...
+*
 
+!.gitignore
+!init.sh
+!
+!doom/*
+!vim/*
+!xmonad/*
+!zsh/*
+!oh-my-zsh/*
+!bin/*
 
-htop
-qutebrowser

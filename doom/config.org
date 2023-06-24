@@ -1,8 +1,7 @@
 #+title: Config
-#+PROPERTY: header-args :tangle config.el :results silent
+#+PROPERTY:  header-args
 #+STARTUP: fold
-#+auto_tangle: t
----
+
 * Personal
 Some functionality uses this to identify you, e.g. GPG configuration, email clients, file templates and snippets.
 #+BEGIN_SRC emacs-lisp

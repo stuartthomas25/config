@@ -5,6 +5,7 @@
 !init.sh
 !
 !doom/*
+doom/custom.el
 !vim/*
 !xmonad/*
 !zsh/*

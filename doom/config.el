@@ -1,30 +1,14 @@
-#+title: Config
-#+PROPERTY:  header-args
-#+STARTUP: fold
----
-* Personal
-Some functionality uses this to identify you, e.g. GPG configuration, email clients, file templates and snippets.
-#+BEGIN_SRC emacs-lisp
 (setq user-full-name "Stuart Nathan Thomas"
       user-mail-address "snthomas@umd.edu")
-#+END_SRC
 
-* General
-#+begin_src emacs-lisp
 ;; (when (not (string-equal system-type "darwin"))
 ;;     (disable-packages! macos))
-#+end_src
 
-* PDFs
-#+begin_src elisp
 (defun snt/pdf-relabel ()
   (interactive)
   (shell-command (format "~/bin/pdfrelabel %d \"%s\"" (pdf-view-current-page) (buffer-file-name)))
   (revert-buffer))
-#+end_src
 
-** PDF themes
-#+BEGIN_SRC emacs-lisp
 (defun update-pdf-colors ()
   (interactive)
   (setq pdf-view-midnight-colors
@@ -39,10 +23,6 @@ Some functionality uses this to identify you, e.g. GPG configuration, email clie
 (map! :mode pdf-view-mode (:n "C-h" 'pdf-view-align-left) (:n "C-l" 'pdf-view-align-right))
 
 (add-hook 'doom-load-theme-hook 'update-pdf-colors 100) ;; depth=100 ensure last
-#+END_SRC
-
-* Themes and Fonts
-#+BEGIN_SRC emacs-lisp
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:
@@ -76,23 +56,14 @@ Some functionality uses this to identify you, e.g. GPG configuration, email clie
 (add-hook 'doom-switch-buffer-hook #'hide-mode-line-mode)
 ;; (global-hide-mode-line-mode -1)
 (map! :leader :desc "Toggle Doom Mode Line" :g "d" (lambda () (interactive) (global-hide-mode-line-mode 'toggle)))
-#+END_SRC
 
-
-* Editor
-Enter to insert new line in normal mode
-#+begin_src emacs-lisp
 ;; (map! :n "RET" #'(lambda () (interactive) (evil-open-below 1) (evil-force-normal-state)))
 ;; (map! :n "S-RET" #'(lambda () (interactive) (evil-open-above 1) (evil-force-normal-state)))
 
 ;; (map! (:when (not buffer-read-only)
 ;;  :n "RET" #'(lambda () (interactive) (evil-open-below 1) (evil-force-normal-state))
 ;;  :n "S-RET" #'(lambda () (interactive) (evil-open-above 1) (evil-force-normal-state))))
-#+end_src
 
-
-This determines the style of line numbers in effect. If set to `nil', line numbers are disabled. For relative line numbers, set this to `relative'.
-#+begin_src emacs-lisp
 (setq display-line-numbers-type 'visual)
 (setq doom-inhibit-large-file-detection t)
 
@@ -122,10 +93,7 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 (remove-hook 'doom-first-buffer-hook #'smartparens-global-mode)
 
 (use-package! julia-quail)
-#+end_src
 
-** Ligatures
-#+begin_src emacs-lisp
 ;; Enable the www ligature in every possible major mode
 (set-ligatures! 't '("www"))
 
@@ -140,10 +108,7 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
                                      "<*>" "<|" "<|>" "<$" "<$>" "<!--" "<-" "<--" "<->" "<+"
                                      "<+>" "<=" "<==" "<=>" "<=<" "<>" "<<" "<<-" "<<=" "<<<"
                                      "<~" "<~~" "</" "</>" "~@" "~-" "~>" "~~" "~~>" "%%"))
-#+end_src
 
-* Custom Keyboard Maps
-#+BEGIN_SRC emacs-lisp
 (map! :leader :desc "Open Terminal" :g "j" #'multi-term)
 (map! :leader :desc "Open eshell" :g "e" 'eshell)
 (global-unset-key [remap delete-frame])
@@ -151,10 +116,7 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 
 (map! :desc "Next buffer" :g "<mouse-9>" #'next-buffer)
 (map! :desc "Next buffer" :g "<mouse-8>" #'previous-buffer)
-#+END_SRC
 
-* Org
-#+BEGIN_SRC emacs-lisp
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
@@ -183,17 +145,9 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 (add-hook 'org-mode-hook #'org-modern-mode)
 (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
 ;; (add-hook 'org-mode-hook #'org-inline-pdf-mode)
-#+END_SRC
 
-** Babel
-#+begin_src elisp
 (setq org-babel-julia-command "julia --sysimage ~/.julia/sysimages/sys_itensors.so")
 
-
-#+end_src
-
-* Dashboard
-#+BEGIN_SRC emacs-lisp
 (defun snt/s-truncate (LEN STR)
   " like s-truncate but adds spaces if the string is shorter than LEN"
   (let ((stem (s-truncate LEN STR)))
@@ -263,13 +217,6 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 	  after-make-frame-functions)
     (setq doom-fallback-buffer-name "*dashboard*"))
 
-#+END_SRC
-
-#+RESULTS:
-: t
-
-* Mu4e
-#+BEGIN_SRC emacs-lisp
 (after! mu4e
   (set-email-account!
    "umd"
@@ -281,12 +228,12 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 
   (setq org-msg-signature "
 
-,#+begin_signature
+#+begin_signature
 Best wishes, \\\\
 Stuart Thomas (he/him) \\\\
 snthomas@umd.edu \\\\
 +1 (407) 701-7788
-,#+end_signature")
+#+end_signature")
 
 
   (setq mu4e-get-mail-command "mbsync umd"
@@ -346,27 +293,13 @@ snthomas@umd.edu \\\\
 
 (require 'mu4e)
 
-#+END_SRC
-
-Show images by default
-#+begin_src emacs-lisp
 (setq gnus-blocked-images nil)
-#+end_src
 
-Disable Main Menu
-#+begin_src emacs-lisp
 (add-hook 'mu4e-main-mode-hook #'(lambda () (mu4e~headers-jump-to-maildir "/umd/INBOX")))
 (remove-hook 'mu4e-main-mode-hook #'evil-collection-mu4e-update-main-view)
 (remove-hook 'mu4e-main-mode-hook #'+mu4e-init-h)
-#+end_src
 
-Change keybinding to `mu4e`, not the doom wrapper
-#+begin_src emacs-lisp
 (map! :leader :desc "Open Mu4e" :g "o m" 'mu4e)
-#+end_src
-
-* LaTeX
-#+BEGIN_SRC emacs-lisp
 
 (map! :desc "Search forward in PDF" :n "g P" #'pdf-sync-forward-search)
 
@@ -397,16 +330,9 @@ Change keybinding to `mu4e`, not the doom wrapper
 
 (setq TeX-arg-right-insert-p nil)
 (setq TeX-electric-sub-and-superscript nil)
-#+END_SRC
 
-Make sure PDF Tools is the first viewing option on the list
-#+BEGIN_SRC emacs-lisp
 (after! tex
     (push '(output-pdf "PDF Tools") TeX-view-program-selection))
-#+END_SRC
-
-* Bibliography
-#+BEGIN_SRC emacs-lisp
 
 (setq bibtex-completion-pdf-field "File")
 
@@ -464,11 +390,6 @@ Make sure PDF Tools is the first viewing option on the list
 
  ))
 
-
-#+END_SRC
-
-* DOI System
-#+BEGIN_SRC emacs-lisp
 (defconst doi-regex "10\\.[0-9]\\{4,5\\}\\/[^;, {}]+")
 
 (defun my/doi-to-reference ()
@@ -546,13 +467,7 @@ STATUS: the status"
 (url-handler-mode 1)
 
 (setq browse-url-browser-function #'open-link)
-#+END_SRC
 
-#+RESULTS:
-: open-link
-
-* Command Line
-#+BEGIN_SRC emacs-lisp
 (setq conda-env-home-directory "/opt/miniforge3")
 (setq conda-anaconda-home "/opt/miniforge3")
 
@@ -572,10 +487,6 @@ apps are not started from a shell."
 
 (set-exec-path-from-shell-PATH)
 
-#+END_SRC
-
-** Julia REPL
-#+BEGIN_SRC emacs-lisp
 ;; https://emacs.stackexchange.com/questions/18775/how-to-get-a-fully-functional-julia-repl-in-emacs
 (defun my/julia-repl ()
   "Runs Julia in a screen session in a `term' buffer."
@@ -637,22 +548,9 @@ apps are not started from a shell."
 ;; (setq window-buffer-change-functions '(my/ob-julia-callback doom-run-switch-buffer-hooks-h))
 ;;
 
-#+END_SRC
-
-#+RESULTS:
-| (lambda nil (set-input-method 'julia)) | julia-repl-mode |
-
-* Flyspell
-#+BEGIN_SRC emacs-lisp
 (after! flycheck
         (setq flycheck-check-syntax-automatically (delq 'idle-change flycheck-check-syntax-automatically))) ;; this conflicts with tramp
-#+END_SRC
 
-#+RESULTS:
-| TeX-revert-document-buffer |
-
-* ElFeed
-#+BEGIN_SRC emacs-lisp
 (setq rmh-elfeed-org-files '("~/org/elfeed.org"))
 (add-hook! 'elfeed-search-mode-hook 'elfeed-update)
 (after! elfeed
@@ -664,14 +562,10 @@ apps are not started from a shell."
 ;;   (interactive)
 ;;   (open-link link nil oldbrowse))
 ;; (advice-add 'browse-url :around 'my/link-advice)
-#+END_SRC
 
-* Projectile
-#+begin_src emacs-lisp
 (after! projectile
   (setq projectile-indexing-method 'alien)
   (setq projectile-enable-caching nil)
   (add-to-list 'projectile-other-file-alist '("tex" "pdf"))
   (add-to-list 'projectile-other-file-alist '("pdf" "tex"))
   (setq projectile-project-search-path '(("~/Projects" . 3))))
-#+end_src

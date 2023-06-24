@@ -174,8 +174,13 @@ alias gt="git status"
 alias cd="conda_cd"
 cd . # so ^ runs on new tab
 
-alias download_from_roxie='sync_roxie -D'
-alias upload_to_roxie='sync_roxie -U'
+# Host specific aliases
+case $(hostname) in
+    Sarabi*)
+        alias download_from_roxie='sync_roxie -D'
+        alias upload_to_roxie='sync_roxie -U'
+        ;;
+esac
 
 #+end_src
 

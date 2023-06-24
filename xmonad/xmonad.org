@@ -338,7 +338,7 @@ defaults = def {
 * Help
 Finally, a copy of the default bindings in simple textual tabular format.
 #+begin_src haskell
-keymaskToString msk =
+myKeymaskToString msk =
   concat . reverse . fst . foldr go ([], msk) $ masks
  where
   masks :: [(KeyMask, String)]
@@ -367,6 +367,6 @@ help conf = unlines $ map formatkb $ myKeyBindings conf
             -- formatkb kb =  keyStr ++ (take (length keyStr - columnWidth) (repeat ' ')) ++ "  --  " ++ (desc kb)
             formatkb kb =  keyStr ++ (take (columnWidth - length keyStr) (repeat ' ')) ++ (desc kb)
                 where
-                  keyStr = (keymaskToString $ mask kb)  ++  (keysymToString $ key kb)
+                  keyStr = (myKeymaskToString $ mask kb)  ++  (keysymToString $ key kb)
 
 #+end_src

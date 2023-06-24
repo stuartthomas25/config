@@ -1,15 +1,19 @@
 #!/bin/zsh
 
 TOGGL_EXEC=$HOME/miniconda3/bin/toggl
+NITROGEN_DIR=$HOME/.config/nitrogen
 
 current_info=$($TOGGL_EXEC --no-header now)
-projectname=$(echo $current_info | sed -n "4p" | sed -e 's/ (#\w\+)//')
+projectname=$(echo "$current_info" | sed -n "4p" | sed -e 's/ (#\w\+)//')
 case $1 in
     startstop)
         if [[ -z $projectname ]]; then
             if $TOGGL_EXEC continue; then
                 projectname=$($TOGGL_EXEC --no-header now | sed -n "4p" | sed -e 's/ (#\w\+)//')
                 notify-send "Resuming \"$projectname\"..." "" -t 5000
+
+                ln -f $NITROGEN_DIR/working.cfg $NITROGEN_DIR/bg-saved.cfg
+                nitrogen --restore &
             else
                 notify-send -u critical "Toggl Failed" "" -t 5000
             fi
@@ -19,6 +23,8 @@ case $1 in
             if $TOGGL_EXEC stop; then
                 dunstctl close
                 notify-send "Stopping \"$projectname\"..." "Elapsed time: $time" -t 5000
+                ln -f $NITROGEN_DIR/not-working.cfg $NITROGEN_DIR/bg-saved.cfg
+                nitrogen --restore &
             else
                 notify-send -u critical "Toggl Failed" "" -t 5000
             fi

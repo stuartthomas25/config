@@ -5,10 +5,11 @@ using TypedTables
 
 datafile = ARGS[1]
 
-data = copy(Table(Arrow.Table(datafile)))
-_rawmetadata = Arrow.getmetadata(Arrow.Table(datafile))
+atab = Arrow.Table(datafile)
+_rawmetadata = Arrow.getmetadata(atab)
+data = deepcopy(Table(atab))
 if isnothing(_rawmetadata)
-    metadata = Dict()
+    metadata = nothing
 else
     metadata = Dict(_rawmetadata)
 end

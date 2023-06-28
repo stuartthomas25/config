@@ -55,15 +55,11 @@
 (package! dashboard
   :recipe (:local-repo "~/src/emacs-dashboard"))
 
-(package! darkroom)
 ; (package! zotelo)
 ;; (package! zotero
 ;;   :recipe (:local-repo "~/Desktop/emacs-zotero"))
 (package! helm-bibtex)
 (package! org-ref)
-;; (package! pdf-continuous-scroll-mode :recipe (
-;;                                        :host github
-;;                                        :repo "dalanicolai/pdf-continuous-scroll-mode.el"))
 ;; (package! org-latex-impatient)
 ;; (package! ob-julia-vterm :recipe (:local-repo "~/Desktop/ob-julia-vterm.el"))
 (package! ob-julia-vterm) 
@@ -74,6 +70,7 @@
 (package! org-roam-server)
 (package! julia-quail :recipe (:host github :repo "stuartthomas25/julia-quail"))
 (package! polymode)
+(package! calibredb)
 (package! lean4-mode :recipe
   (:host github
    :repo "leanprover/lean4-mode"

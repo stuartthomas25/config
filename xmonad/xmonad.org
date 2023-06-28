@@ -133,7 +133,7 @@ myKeyBindings conf@(XConfig {XMonad.modMask = modm}) =
     , KeyBinding (modm .|. mod1Mask )     xK_equal       "Launch Terminal"                                  $    spawn "alacritty"
     , KeyBinding (modm .|. mod1Mask )     xK_minus       "Launch Emacs"                                     $    spawn "~/bin/e"
     , KeyBinding (modm .|. mod1Mask )     xK_0           "Launch qutebrowser"                               $    spawn "qutebrowser"
-    , KeyBinding (modm .|. mod1Mask )     xK_9           "Launch Spotify"                                   $    spawn "flatpak run com.spotify.Client"
+    , KeyBinding (modm .|. mod1Mask )     xK_9           "Launch Spotify"                                   $    spawn "spotify"
     , KeyBinding (modm .|. shiftMask)     xK_t           "launch toggl"                                     $    spawn $ togglExec ++ " www"
     , KeyBinding modm                     xK_semicolon   "start/stop toggl"                                 $    spawn "~/bin/mytoggl startstop"
     , KeyBinding (modm .|. shiftMask)     xK_semicolon   "start/stop toggl"                                 $    spawn "~/bin/mytoggl status"

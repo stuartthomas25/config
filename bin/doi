@@ -1,0 +1,216 @@
+#!/usr/bin/env python3
+#
+# Bibliography tools to produce RevTeX 4-2 compatible bibtex entries from DOIs
+# Author: Stuart Thomas
+
+import argparse
+import pybtex.database as bibtex
+from pylatexenc.latexencode import UnicodeToLatexEncoder
+import re
+import requests
+from colors import color
+import arxiv
+import sys
+
+
+# doi_regex = re.compile(r"10\\.[0-9]\\{4,5\\}\\/[^;, {}]+")
+#
+parser = argparse.ArgumentParser(description='Bibliography tools to produce RevTeX 4-2 compatible bibtex entries from DOIs')
+parser.add_argument('-f', '--file', type=argparse.FileType('r+'), nargs="?", help="file to format in place")
+parser.add_argument('-d', '--doi', type=str, help="doi to retrieve")
+parser.add_argument('-n', '--newkey', action="store_true", help="generate new keys")
+
+doi_regex = re.compile(r"10.[0-9]{4,5}\/[^;, {}]+")
+
+FILTERS = []
+def filter(f):
+   FILTERS.append(f)
+
+@filter
+def format_arxiv(e):
+   doi = e.fields["doi"]
+   if not "ARXIV" in doi:
+      return e
+
+   e.type = "unpublished"
+   e.fields["archivePrefix"] = "arXiv"
+   e.fields["eprinttype"] = "arxiv"
+   e.fields["eprint"] = re.search(r"ARXIV\.([\d\.]+)", doi).groups()[0]
+
+
+   return e
+
+"""
+Theres some issue with PhysRev not putting in pages
+"""
+@filter
+def format_aps(e):
+   doi = e.fields["doi"]
+   if doi[:7]!="10.1103":
+      return e
+   pages = doi.split(".")[-1]
+   e.fields["pages"] = pages
+   return e
+
+@filter
+def truncate_authors(e, limit=15):
+   authors = e.persons['author']
+   if len(authors) <= limit:
+      return e
+
+   authors = authors[:15] + [bibtex.Person("others")]
+
+   e.persons['author'] = authors
+   return e
+
+@filter
+def format_authors(e):
+   return e
+
+
+@filter
+def format_latex_title(e):
+   if "title" not in e.fields:
+      return e
+
+   title = e.fields["title"]
+   title = re.sub(r"\$\\less\$/?mml:mi\$\\greater\$", "$", title)
+   title = re.sub(r"\$\\less\$/?mml:math.*?\$\\greater\$", " ", title)
+   e.fields['title'] = title
+   return e
+
+@filter
+def make_key(e):
+   if args.newkey:
+      author = e.persons['author'][0]
+      authorkey = str(author).split(",")[0].lower()
+      year = e.fields.get('year', '')
+      e.key = authorkey+year
+   return e
+
+@filter
+def remove_notes(e):
+   if "note" in e.fields:
+      del e.fields["note"]
+   return e
+
+
+def format_entry(e):
+   for f in FILTERS:
+      e = f(e)
+   return e
+
+
+def find_published_arxiv(doi):
+   arxiv_id = doi.split("/")[-1][6:]
+   s = list(arxiv.Search(id_list=[arxiv_id]).results())[0]
+
+   if s.doi is not None:
+      print(f"Published article found, using {doi}")
+      return s.doi
+
+   return doi
+
+
+def get_citation(doi):
+   # first, if arxiv, check if published
+   if "arxiv" in doi.lower():
+      doi = find_published_arxiv(doi)
+
+   stem = "https://doi.org/{}"
+   headers = {"Accept":"application/x-bibtex"}
+   url = stem.format(doi)
+   url = url.replace("\_","_")
+   res = requests.get(url, headers=headers)
+
+   if res.status_code == 200:
+      text = res.text
+      e = list(bibtex.parse_string(text, 'bibtex').entries.values())[0]
+      return format_entry(e)
+   else:
+      raise Exception(f"HTTP returned status code {res.status_code} from URL {url}")
+
+
+def clean_doi(doi):
+   res = doi_regex.search(doi)
+   if res is None:
+      raise Exception(f"No DOI found in string: {doi}")
+   return res[0]
+
+def unique_key(entries, key):
+   new_key = key
+   while new_key in entries:
+      if new_key[-1].isdigit() or new_key[-1]=="z":
+         new_key = new_key + "a"
+      else:
+         new_key = new_key[:-1] + chr(ord(new_key[-1])+1)
+
+   return new_key
+
+def warn(s):
+   print(color(s, fg='red'))
+
+
+def format_file(f):
+   # with open(path, 'r') as f:
+   data = bibtex.parse_file(f.name)
+   f = open(f.name, 'r+') # for some reason pybtex closes the file
+   dois = []
+   new_entries = {}
+   for e in data.entries.values():
+      if 'doi' not in e.fields:
+         title = e.fields['title']
+         warn(f"No DOI found for \"{title}\"")
+         newkey = unique_key(new_entries, e.key)
+         new_entries[newkey] = e
+         continue
+
+      doi = e.fields["doi"]
+
+      if doi in dois:
+         warn(f"{doi} already exists!")
+         continue
+
+      print(doi)
+      newe = get_citation(doi)
+      newkey = unique_key(new_entries, e.key)
+
+      new_entries[newkey] = newe
+
+      dois.append(doi)
+
+   entries = sorted(new_entries.items())
+   newdata = bibtex.BibliographyData(entries, preamble=data.preamble)
+
+
+   s = newdata.to_string('bibtex')
+   s = s.replace(r"\\_","_")
+   s = s.replace(r"\_","_")
+   # s = s.encode('utf-8').decode('unicode_escape') #
+
+   f.write(s)
+
+   print(f"Wrote to {f.name}")
+
+if __name__=="__main__":
+   args = parser.parse_args()
+   f = args.file
+   if args.file is not None and args.doi is not None:
+      sys.stderr.write("Only one of FILE and DOI can be specified\n")
+      quit(1)
+   elif args.doi is not None:
+      doi = args.doi
+      e = get_citation(doi)
+      newdata = bibtex.BibliographyData({e.key:e})
+      newdata.to_file(sys.stdout, 'bibtex')
+
+
+   elif args.file is not None:
+      try:
+         format_file(f)
+      except Exception as e:
+         raise e
+      finally:
+         f.close()
+   else:
+      parser.print_help()

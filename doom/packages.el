@@ -64,6 +64,8 @@
 ;; (package! ob-julia-vterm :recipe (:local-repo "~/Desktop/ob-julia-vterm.el"))
 (package! ob-julia-vterm) 
 (package! org-auto-tangle)
+(package! wolfram-mode)
+(package! ob-mathematica)
 ;; (package! ewal)
 (package! org-modern)
 (package! org-inline-pdf)

@@ -25,6 +25,16 @@ Some functionality uses this to identify you, e.g. GPG configuration, email clie
   (revert-buffer))
 
 (setq pdf-cache-image-limit 0)
+
+(after! pdf-tools
+  (set-evil-initial-state! 'pdf-view-mode 'emacs))
+
+(after! pdf-view
+  (set-evil-initial-state! 'pdf-view-mode 'emacs))
+
+(after! evil-collection-pdf
+  (set-evil-initial-state! 'pdf-view-mode 'emacs))
+
 #+end_src
 
 ** PDF themes

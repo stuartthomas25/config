@@ -137,7 +137,7 @@ myKeyBindings conf@(XConfig {XMonad.modMask = modm}) =
     , KeyBinding (modm .|. shiftMask)     xK_t           "launch toggl"                                     $    spawn $ togglExec ++ " www"
     , KeyBinding modm                     xK_semicolon   "start/stop toggl"                                 $    spawn "~/bin/mytoggl startstop"
     , KeyBinding (modm .|. shiftMask)     xK_semicolon   "start/stop toggl"                                 $    spawn "~/bin/mytoggl status"
-    , KeyBinding (modm .|. shiftMask)     xK_b           "connect headphones"                               $    spawn $ "bluetoothctl connect F0:1D:BC:F6:94:37"
+    , KeyBinding (modm .|. shiftMask)     xK_b           "connect headphones"                               $    spawn $ "bluetoothctl connect AC:BF:71:64:22:CA"
     , KeyBinding (modm .|. shiftMask)     xK_e           "restart emacs"                                    $    spawn $ myQuitEmacs ++ "; " ++ myEmacsServer
     , KeyBinding (modm .|. shiftMask)     xK_p           "Open Passwords"                                   $    passTypePrompt def
     , KeyBinding modm                     xK_f           "Rotate main monitor"                              $    spawn "/home/stuart/bin/flipscreen"

@@ -16,8 +16,8 @@ fi
 # Path to your oh-my-zsh installation.
 export CONFIG="$HOME/.config"
 export ZSH="$CONFIG/oh-my-zsh"
-export EDITOR="e"
-export ALTERNATE_EDITOR="vim"
+export EDITOR="vim"
+# export ALTERNATE_EDITOR="vim"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,

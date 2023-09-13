@@ -172,6 +172,8 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 (map! (:map org-mode-map :localleader :desc "Preview LaTeX in buffer" "L" #'org-latex-preview-buffer))
 (map! (:map org-mode-map :localleader :desc "Preview LaTeX at point" "j" #'org-latex-preview))
 
+(map! (:map org-mode-map :localleader "@" :desc "Insert Org-Ref link" #'org-ref-insert-link))
+
 (use-package! org-auto-tangle
   :defer t
   :hook (org-mode . org-auto-tangle-mode))
@@ -180,6 +182,30 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 (add-hook 'org-mode-hook #'org-modern-mode)
 (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
 ;; (add-hook 'org-mode-hook #'org-inline-pdf-mode)
+
+(defconst snt/org-babel-do-not-edit-header "
+################################################
+#         AUTOMATICALLY GENERATED FILE         #
+#              * DO NOT EDIT *                 #
+################################################
+
+")
+
+
+(defun snt/add_header ()
+        (goto-char 0)
+        (let ((comment-char (cl-case major-mode
+                              ('emacs-lisp-mode ";")
+                              (t "#"))))
+          (message "Here: %s" comment-char)
+          (insert (string-replace "#" comment-char snt/org-babel-do-not-edit-header))
+
+          )
+        (save-buffer)
+
+  )
+
+(add-hook 'org-babel-post-tangle-hook #'snt/add_header)
 #+END_SRC
 
 ** Babel
@@ -221,8 +247,10 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 
   (use-package! dashboard
     :init      ;; tweak dashboard config before loading it
-    (setq dashboard-set-heading-icons t)
-    (setq dashboard-set-file-icons t)
+    ;; (setq dashboard-set-heading-icons t)
+    ;; (setq dashboard-set-file-icons t)
+    (setq dashboard-set-heading-icons nil)
+    (setq dashboard-set-file-icons nil)
     ;; (setq dashboard-banner-logo-title "\nKEYBINDINGS:\nOpen dired file manager  (SPC .)\nOpen buffer list         (SPC b i)\nFind recent files        (SPC f r)\nOpen the eshell          (SPC e s)\nToggle big font mode     (SPC t b)")
     ;;(setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
     (setq dashboard-item-names '(("Recent Files:" . "Recently opened files:")
@@ -460,6 +488,7 @@ Make sure PDF Tools is the first viewing option on the list
  ;; ("Gallica Bibliothèque Numérique            (web)" . "http://gallica.bnf.fr/Search?q=%s")
 
  ))
+
 
 
 #+END_SRC

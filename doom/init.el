@@ -13,6 +13,8 @@
 ;;
 ;;      Alternatively, press 'gd' (or 'C-c c d') on a module to browse its
 ;;      directory (for easy access to its source code).
+;;
+(when (equal system-type 'darwin) (doom! :os macos))
 
 (doom! :input
        ;;chinese
@@ -188,4 +190,3 @@
        literate
        (default +bindings +smartparens))
 
-(when (equal system-type 'darwin) (doom! :os macos))

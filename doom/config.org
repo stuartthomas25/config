@@ -729,3 +729,22 @@ apps are not started from a shell."
 (map! :leader :desc "Open Calibre" :g "o c" 'calibredb)
 (map! (:after calibredb :map calibredb-search-mode-map :desc "Open File" :nm "RET" #'calibredb-find-file))
 #+end_src
+
+* Journal
+#+begin_src emacs-lisp
+(defun journal-new-entry ()
+  "Add new entry to journal.
+Add new day if necessary, otherwise, add to current day."
+  (interactive)
+  (find-file "~/org/journal.org")
+  (let* ((date (calendar-current-date))
+     (year (elt date 2))
+     (month (elt date 0))
+     (day (elt date 1)))
+    (org-datetree-find-date-create (list month day year)))
+  (save-restriction
+    (org-narrow-to-subtree)
+    (goto-char (point-max))
+    (insert (format "\n**** %s" (format-time-string "[%Y-%m-%d %a %H:%M] ")))))
+
+#+end_src

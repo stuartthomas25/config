@@ -131,6 +131,15 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 (use-package! julia-quail)
 #+end_src
 
+When searching, automatically place the match in the center
+#+begin_src emacs-lisp
+(advice-add 'evil-ex-search-next :after
+            (lambda (&rest x) (evil-scroll-line-to-center (line-number-at-pos))))
+(advice-add 'evil-ex-search-previous :after
+            (lambda (&rest x) (evil-scroll-line-to-center (line-number-at-pos))))
+#+end_src
+
+
 ** Ligatures
 #+begin_src emacs-lisp
 ;; Enable the www ligature in every possible major mode
@@ -202,9 +211,10 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 ")
 
 
-(defun snt/add_header ()
+(defun snt/add-header ()
         (goto-char 0)
         (let ((comment-char (cl-case major-mode
+                              ('haskell-mode "-- ")
                               ('emacs-lisp-mode ";")
                               (t "#"))))
           (message "Here: %s" comment-char)
@@ -215,7 +225,7 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 
   )
 
-(add-hook 'org-babel-post-tangle-hook #'snt/add_header)
+(add-hook 'org-babel-post-tangle-hook #'snt/add-header)
 #+END_SRC
 
 ** Babel
@@ -257,10 +267,10 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 
   (use-package! dashboard
     :init      ;; tweak dashboard config before loading it
-    ;; (setq dashboard-set-heading-icons t)
-    ;; (setq dashboard-set-file-icons t)
-    (setq dashboard-set-heading-icons nil)
-    (setq dashboard-set-file-icons nil)
+    (setq dashboard-set-heading-icons t)
+    (setq dashboard-set-file-icons t)
+    ;; (setq dashboard-set-heading-icons nil)
+    ;; (setq dashboard-set-file-icons nil)
     ;; (setq dashboard-banner-logo-title "\nKEYBINDINGS:\nOpen dired file manager  (SPC .)\nOpen buffer list         (SPC b i)\nFind recent files        (SPC f r)\nOpen the eshell          (SPC e s)\nToggle big font mode     (SPC t b)")
     ;;(setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
     (setq dashboard-item-names '(("Recent Files:" . "Recently opened files:")
@@ -508,8 +518,7 @@ Make sure PDF Tools is the first viewing option on the list
 
 * DOI System
 #+BEGIN_SRC emacs-lisp
-(defconst doi-regex "10\\.[0-9]\\{4,5\\}\\/[^;, {}]+")
-
+(defconst doi-regex "10\\.[0-9]\\{4,5\\}\\/[^;, {}\"]+")
 (defun my/doi-to-reference ()
   (interactive)
   (let ((line (thing-at-point 'line t)))
@@ -542,7 +551,7 @@ Make sure PDF Tools is the first viewing option on the list
   "Uri callback.
 STATUS: the status"
   ;; remove headers
-  (message "Recieved search results...")
+  (message "Received search results...")
   (message status)
   (goto-char url-http-end-of-headers)
   ;; (print status)
@@ -558,10 +567,15 @@ STATUS: the status"
       (message "Unsuccessful"))
   (advice-remove 'url-http-handle-authentication #'ignore)))
 
+(defun change-url (url)
+  (cond
+    ((string-match "https:\\/\\/api.elsevier.com\\/content\\/article\\/PII:\\(S[0-9]+\\)" url) (format "https://www.sciencedirect.com/science/article/pii/%s/pdfft" (match-string 1 url)))
+    (t url)))
+
 (defun open-doi (doi &optional fname)
   (interactive "sDOI: ")
   (message "Opening DOI: %s" doi)
-  (url-retrieve (url-encode-url (format "http://api.crossref.org/v1/works/%s\n" doi)) 'callback (list fname) t t))
+  (url-retrieve (url-encode-url (change-url (format "http://api.crossref.org/v1/works/%s\n" doi))) 'callback (list fname) t t))
 
 (defun open-arxiv (arxivid &optional fname)
   (interactive "sArXiv Id: ")
@@ -575,11 +589,12 @@ STATUS: the status"
   (interactive "sURI: ")
   (message "Opening link: %s" uri)
   (unless default-open-function (setq default-open-function #'browse-url-default-browser))
-  (cond ((string-match doi-regex uri) (open-doi (match-string 0 uri) fname))
-        ;; ((string-match doi-regex uri) (open-doi (concat "10.1038/" (match-string 1 uri)) fname))
-        ((string-match "[0-9]\\{4\\}\\.[0-9]\\{5\\}\\(v[0-9]+\\)*$" uri) (open-arxiv (match-string 0 uri) fname))
-        ((string-match "arxiv:\\([-a-z]+\\/[0-9]\\{7\\}\\(v[0-9]+\\)*\\)$" uri) (open-arxiv (match-string 1 uri) fname)) ;;old style, identifier
-        ((string-match "arxiv\\.org\\/abs\\/\\([-a-z]+\\/[0-9]\\{7\\}\\(v[0-9]+\\)*\\)$" uri) (open-arxiv (match-string 1 uri) fname)) ;; old style, url
+  (cond
+        ((string-match "arxiv[:.]\\([0-9]\\{4\\}\\.[0-9]\\{4,5\\}\\(v[0-9]+\\)*\\)$" uri) (open-arxiv (match-string 1 uri) fname)) ;; new style, DOI
+        ((string-match "arxiv[:.]\\([-a-z]+\\/[0-9]\\{7\\}\\(v[0-9]+\\)*\\)$" uri) (open-arxiv (match-string 1 uri) fname)) ;;old style, DOI
+        ((string-match "arxiv\\.org\\/\\(abs|pdf\\)\\/\\([0-9]\\{4,5\\}\\.[0-9]\\{5\\}\\(v[0-9]+\\)*\\)" uri) (open-arxiv (match-string 2 uri) fname)) ;; new style, url
+        ((string-match "arxiv\\.org\\/\\(abs|pdf\\)\\/\\([-a-z]+\\/[0-9]\\{7\\}\\(v[0-9]+\\)*\\)" uri) (open-arxiv (match-string 2 uri) fname)) ;; old style, url
+        ((string-match doi-regex uri) (open-doi (match-string 0 uri) fname))
         ( t (funcall default-open-function uri))))
 
 (setq pdf-links-browse-uri-function 'open-link)

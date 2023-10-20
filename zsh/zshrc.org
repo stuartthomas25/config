@@ -4,7 +4,6 @@
 #+auto_tangle: t
 
 #+begin_src bash
-#test
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 #
@@ -117,8 +116,6 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 #+end_src
-
-#+RESULTS:
 
 * Aliases
 #+begin_src bash
@@ -250,4 +247,9 @@ function catlatest () {
 case "$(hostname)" in
     *zaratan*)   export XDG_DATA_HOME=/scratch/zt1/project/cmtc/user/snthomas ;;
 esac
+#+end_src
+
+* OCaml
+#+begin_src bash
+[[ ! -r /Users/stuart/.opam/opam-init/init.zsh ]] || source /Users/stuart/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
 #+end_src

@@ -52,8 +52,8 @@
 ;(package! zotero :recipe
           ;(:host github
            ;:repo "emacsmirror/zotero"))
-(package! dashboard
-  :recipe (:local-repo "~/src/emacs-dashboard"))
+(package! dashboard)
+  ; :recipe (:local-repo "~/src/emacs-dashboard"))
 
 ; (package! zotelo)
 ;; (package! zotero
@@ -61,8 +61,11 @@
 (package! helm-bibtex)
 (package! org-ref)
 ;; (package! org-latex-impatient)
-;; (package! ob-julia-vterm :recipe (:local-repo "~/Desktop/ob-julia-vterm.el"))
-(package! ob-julia-vterm) 
+;; (package! ob-julia-vterm)
+(package! ob-julia-vterm :recipe
+  (:host github
+   :repo "stuartthomas25/ob-julia-vterm.el"
+   :files ("*.el")))
 (package! org-auto-tangle)
 (package! wolfram-mode)
 (package! ob-mathematica)

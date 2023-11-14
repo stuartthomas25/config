@@ -400,7 +400,7 @@ Show images by default
 
 Disable Main Menu
 #+begin_src emacs-lisp
-(add-hook 'mu4e-main-mode-hook #'(lambda () (mu4e~headers-jump-to-maildir "/umd/INBOX")))
+(add-hook 'mu4e-main-rendered-hook #'(lambda () (mu4e~headers-jump-to-maildir "/umd/INBOX")))
 (remove-hook 'mu4e-main-mode-hook #'evil-collection-mu4e-update-main-view)
 (remove-hook 'mu4e-main-mode-hook #'+mu4e-init-h)
 #+end_src
@@ -708,7 +708,8 @@ apps are not started from a shell."
 (setq rmh-elfeed-org-files '("~/org/elfeed.org"))
 (add-hook! 'elfeed-search-mode-hook 'elfeed-update)
 (after! elfeed
-  (setq elfeed-search-filter "+arxiv"))
+  ;; (setq elfeed-search-filter "+arxiv"))
+   (setq elfeed-search-filter "@1-day-ago"))
 
 (map! :leader :desc "Open Elfeed" :g "o x" '=rss)
 

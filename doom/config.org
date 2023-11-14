@@ -174,8 +174,9 @@ When searching, automatically place the match in the center
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
-(add-hook 'org-mode-hook 'org-indent-mode)
-(add-hook 'org-mode-hook 'org-hide-block-all)
+(add-hook 'org-mode-hook #'org-indent-mode)
+(add-hook 'org-mode-hook #'org-hide-block-all)
+(add-hook 'org-mode-hook #'org-inline-pdf-mode)
 (add-hook 'org-mode-hook '(lambda () (require 'org-ref)))
 
 (after! org
@@ -293,7 +294,7 @@ When searching, automatically place the match in the center
     (setq dashboard-agenda-prefix-format "(%(projectile-project-name)) %i %-12:c %s ")
     (setq dashboard-agenda-sort-strategy '(time-up todo-state-up))
     :config
-    ;; (dashboard-modify-heading-icons '((mail . "mail")))
+    (dashboard-modify-heading-icons '((mail . "mail")))
     (add-to-list 'dashboard-item-generators  '(mail . snt/dashboard-insert-mail))
     (dashboard-setup-startup-hook)
     (setq dashboard-set-footer nil)
@@ -390,7 +391,6 @@ snthomas@umd.edu \\\\
   (mu4e-update-mail-and-index t))
 
 (require 'mu4e)
-
 #+END_SRC
 
 Show images by default
@@ -400,7 +400,7 @@ Show images by default
 
 Disable Main Menu
 #+begin_src emacs-lisp
-(add-hook 'mu4e-main-mode-hook #'(lambda () (mu4e~headers-jump-to-maildir "/umd/INBOX")))
+;; (add-hook 'mu4e-main-mode-hook #'(lambda () (mu4e~headers-jump-to-maildir "/umd/INBOX")))
 (remove-hook 'mu4e-main-mode-hook #'evil-collection-mu4e-update-main-view)
 (remove-hook 'mu4e-main-mode-hook #'+mu4e-init-h)
 #+end_src
@@ -531,14 +531,18 @@ Make sure PDF Tools is the first viewing option on the list
 (map! (:map org-mode-map :localleader "D" :desc "Replace DOI in line with Bibtex reference" #'my/doi-to-reference))
 
 (defconst stumacs-urls-to-avoid '("scitation" "link.aps.org/article/"))
+(defconst stumacs-url-retrieve-timeout 15)
 
 ;; returns t if retrieved successfully
 (defun display-pdf (url &optional fname)
   (message (concat "Retrieving " url))
   (unless (-any? (lambda (m) (string-match-p m url)) stumacs-urls-to-avoid)
-    (let ((buffer (url-retrieve-synchronously url nil nil 5))
-          (filename (if fname fname (make-temp-file "stumacs" nil ".pdf"))))
-      (when (and buffer (equal 200 (url-http-symbol-value-in-buffer 'url-http-response-status buffer)))
+    (message "%s" (concat "Trying " url))
+    (let* ((buffer (url-retrieve-synchronously url nil nil stumacs-url-retrieve-timeout))
+           (filename (if fname fname (make-temp-file "stumacs" nil ".pdf")))
+           (response-code (and buffer  (url-http-symbol-value-in-buffer 'url-http-response-status buffer))))
+      (message "Returned code %s" response-code)
+      (when (equal 200 response-code)
         (message "Successfully retrieved PDF")
         (with-current-buffer buffer
             (goto-char (point-min))
@@ -592,8 +596,8 @@ STATUS: the status"
   (cond
         ((string-match "arxiv[:.]\\([0-9]\\{4\\}\\.[0-9]\\{4,5\\}\\(v[0-9]+\\)*\\)$" uri) (open-arxiv (match-string 1 uri) fname)) ;; new style, DOI
         ((string-match "arxiv[:.]\\([-a-z]+\\/[0-9]\\{7\\}\\(v[0-9]+\\)*\\)$" uri) (open-arxiv (match-string 1 uri) fname)) ;;old style, DOI
-        ((string-match "arxiv\\.org\\/\\(abs|pdf\\)\\/\\([0-9]\\{4,5\\}\\.[0-9]\\{5\\}\\(v[0-9]+\\)*\\)" uri) (open-arxiv (match-string 2 uri) fname)) ;; new style, url
-        ((string-match "arxiv\\.org\\/\\(abs|pdf\\)\\/\\([-a-z]+\\/[0-9]\\{7\\}\\(v[0-9]+\\)*\\)" uri) (open-arxiv (match-string 2 uri) fname)) ;; old style, url
+        ((string-match "arxiv\\.org\\/\\(abs\\|pdf\\)\\/\\([0-9]\\{4,5\\}\\.[0-9]\\{5\\}\\(v[0-9]+\\)*\\)" uri) (open-arxiv (match-string 2 uri) fname)) ;; new style, url
+        ((string-match "arxiv\\.org\\/\\(abs\\|pdf\\)\\/\\([-a-z]+\\/[0-9]\\{7\\}\\(v[0-9]+\\)*\\)" uri) (open-arxiv (match-string 2 uri) fname)) ;; old style, url
         ((string-match doi-regex uri) (open-doi (match-string 0 uri) fname))
         ( t (funcall default-open-function uri))))
 
@@ -602,6 +606,7 @@ STATUS: the status"
 
 (setq browse-url-browser-function #'open-link)
 #+END_SRC
+
 
 * Command Line
 #+BEGIN_SRC emacs-lisp

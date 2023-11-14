@@ -713,7 +713,8 @@ apps are not started from a shell."
 (setq rmh-elfeed-org-files '("~/org/elfeed.org"))
 (add-hook! 'elfeed-search-mode-hook 'elfeed-update)
 (after! elfeed
-  (setq elfeed-search-filter "+arxiv"))
+  ;; (setq elfeed-search-filter "+arxiv"))
+   (setq elfeed-search-filter "@1-day-ago"))
 
 (map! :leader :desc "Open Elfeed" :g "o x" '=rss)
 

@@ -388,16 +388,15 @@ Show images by default
 (setq gnus-blocked-images nil)
 #+end_src
 
-Disable Main Menu
+Change keybinding to `mu4e`, not the doom wrapper.
+Disable Main Menu by going directly to inbox
 #+begin_src emacs-lisp
 ;; (add-hook 'mu4e-main-mode-hook #'(lambda () (mu4e~headers-jump-to-maildir "/umd/INBOX")))
 (remove-hook 'mu4e-main-mode-hook #'evil-collection-mu4e-update-main-view)
 (remove-hook 'mu4e-main-mode-hook #'+mu4e-init-h)
-#+end_src
 
-Change keybinding to `mu4e`, not the doom wrapper
-#+begin_src emacs-lisp
-(map! :leader :desc "Open Mu4e" :g "o m" 'mu4e)
+(map! :leader :desc "Open Mu4e" :g "o m" '(lambda () (interactive) (mu4e~headers-jump-to-maildir "/umd/INBOX")))
+(map! :desc "Quit Mu4e" :map mu4e-headers-mode-map :n "q" 'mu4e-view-quit)
 #+end_src
 
 * LaTeX

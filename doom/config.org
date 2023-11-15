@@ -25,16 +25,6 @@ Some functionality uses this to identify you, e.g. GPG configuration, email clie
   (revert-buffer))
 
 (setq pdf-cache-image-limit 0)
-
-(after! pdf-tools
-  (set-evil-initial-state! 'pdf-view-mode 'emacs))
-
-(after! pdf-view
-  (set-evil-initial-state! 'pdf-view-mode 'emacs))
-
-(after! evil-collection-pdf
-  (set-evil-initial-state! 'pdf-view-mode 'emacs))
-
 #+end_src
 
 ** PDF themes
@@ -547,7 +537,7 @@ Make sure PDF Tools is the first viewing option on the list
         (with-current-buffer buffer
             (goto-char (point-min))
             (re-search-forward "^$")
-            (write-region (point) (point-max) filename))
+            (write-region (+ (point) 1) (point-max) filename)) ;; add point to fix scroll bug
         (find-file filename)
         t))))
 

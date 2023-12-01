@@ -395,7 +395,7 @@ Disable Main Menu by going directly to inbox
 (remove-hook 'mu4e-main-mode-hook #'evil-collection-mu4e-update-main-view)
 (remove-hook 'mu4e-main-mode-hook #'+mu4e-init-h)
 
-(map! :leader :desc "Open Mu4e" :g "o m" '(lambda () (interactive) (mu4e~headers-jump-to-maildir "/umd/INBOX")))
+(map! :leader :desc "Open Mu4e" :g "o m" '(lambda () (interactive) (mu4e t) (mu4e~headers-jump-to-maildir "/umd/INBOX")))
 (map! :desc "Quit Mu4e" :map mu4e-headers-mode-map :n "q" 'mu4e-view-quit)
 #+end_src
 
@@ -500,10 +500,21 @@ Make sure PDF Tools is the first viewing option on the list
  ;; ("Gallica Bibliothèque Numérique            (web)" . "http://gallica.bnf.fr/Search?q=%s")
 
  ))
-
-
-
 #+END_SRC
+
+#+begin_src emacs-lisp
+(defun save-pdf-to-bib (pdf-path)
+     (message (doi-of-pdf pdf-path))
+;;   (let ((project (projectile-acquire-root)))
+;;     (message project)
+;;     (message proj)
+;;     (message (shell
+;;     (find-file pdf-path)
+;; )
+)
+(save-pdf-to-bib "/tmp/qutebrowser-downloads-cnl95d7j/tmp5c28pc7__PhysRevB.108.155404.pdf")
+#+end_src
+
 
 * DOI System
 #+BEGIN_SRC emacs-lisp
@@ -520,6 +531,7 @@ Make sure PDF Tools is the first viewing option on the list
 (map! (:map org-mode-map :localleader "D" :desc "Replace DOI in line with Bibtex reference" #'my/doi-to-reference))
 
 (defconst stumacs-urls-to-avoid '("scitation" "link.aps.org/article/"))
+;; (defconst stumacs-urls-to-avoid '())
 (defconst stumacs-url-retrieve-timeout 15)
 
 ;; returns t if retrieved successfully
@@ -595,6 +607,47 @@ STATUS: the status"
 
 (setq browse-url-browser-function #'open-link)
 #+END_SRC
+
+Capture and Arxiv open
+#+begin_src emacs-lisp
+(org-link-set-parameters "pdf"
+                         :store #'org-pdf-store-link)
+
+(org-link-set-parameters "arxiv"
+                         :follow #'org-arxiv-open
+                         :export #'org-arxiv-export)
+
+
+(defun doi-of-pdf (filename)
+    (let* ((res (shell-command-to-string (concat "/home/stuart/miniconda3/bin/pdf2doi " filename))))
+        (nth 1 (string-split res " " t))))
+
+(defun org-pdf-store-link ()
+  "Store a link to a man page."
+  (when (memq major-mode '(pdf-view-mode))
+    (let ((doi (doi-of-pdf (buffer-file-name))))
+      (if (string-equal (car (string-split doi "/")) "10.48550")
+        (org-link-store-props
+            :type "arxiv"
+            :link  (concat "arxiv:" (substring doi 15)))
+        (org-link-store-props
+            :type "doi"
+            :link  (concat "doi:" doi ))))))
+
+
+(defun org-arxiv-open (path _)
+  (open-arxiv path))
+
+(defun org-arxiv-export (link description format _)
+  (let ((path (format "http://arxiv.org/abs/%s" link))
+        (desc (or description link)))
+    (pcase format
+      (`html (format "<a target=\"_blank\" href=\"%s\">%s</a>" path desc))
+      (`latex (format "\\href{%s}{%s}" path desc))
+      (`texinfo (format "@uref{%s,%s}" path desc))
+      (`ascii (format "%s (%s)" desc path))
+      (t path))))
+#+end_src
 
 
 * Command Line

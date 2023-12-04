@@ -502,18 +502,40 @@ Make sure PDF Tools is the first viewing option on the list
  ))
 #+END_SRC
 
+
+Auto import
 #+begin_src emacs-lisp
+(defconst project-bib-org-file "bib.org")
+(defconst project-references-directory "references")
+(defun get-citation-from-doi (doi)
+   (shell-command-to-string (concat "doi -nd " doi)))
+
 (defun save-pdf-to-bib (pdf-path)
-     (message (doi-of-pdf pdf-path))
-;;   (let ((project (projectile-acquire-root)))
-;;     (message project)
-;;     (message proj)
-;;     (message (shell
-;;     (find-file pdf-path)
-;; )
-)
-(save-pdf-to-bib "/tmp/qutebrowser-downloads-cnl95d7j/tmp5c28pc7__PhysRevB.108.155404.pdf")
+  (clear-minibuffer-message)
+   (let* (
+    (project (projectile-acquire-root))
+    (doi (doi-of-pdf pdf-path))
+    (citation (get-citation-from-doi doi))
+    (_ (string-match "@\\(\\w*\\){\\(.*\\),\n" citation))
+    (key (message (match-string 2 citation)))
+    (insert-text (concat "\n" (read-string "Description: ") "\n#+begin_src bibtex\n" citation "\n#+end_src\n"))
+    (bib-file (concat project project-bib-org-file))
+    (new-pdf-path (concat project project-references-directory "/" key ".pdf")))
+
+     (find-file bib-file)
+     (goto-char (point-max))
+     (insert insert-text)
+     ;; ( append-to-file insert-text nil  )
+     (rename-file pdf-path)))
 #+end_src
+
+#+begin_src emacs-lisp
+
+(let ((citation (get-citation-from-doi "10.1103/physrevb.108.155404")))
+  (string-match "@\\(\\w*\\){\\(.*\\),\n" citation)
+)
+#+end_src
+
 
 
 * DOI System
@@ -619,8 +641,9 @@ Capture and Arxiv open
 
 
 (defun doi-of-pdf (filename)
-    (let* ((res (shell-command-to-string (concat "/home/stuart/miniconda3/bin/pdf2doi " filename))))
+    (let* ((res (shell-command-to-string (concat "pdf2doi " filename))))
         (nth 1 (string-split res " " t))))
+
 
 (defun org-pdf-store-link ()
   "Store a link to a man page."
@@ -647,6 +670,7 @@ Capture and Arxiv open
       (`texinfo (format "@uref{%s,%s}" path desc))
       (`ascii (format "%s (%s)" desc path))
       (t path))))
+
 #+end_src
 
 

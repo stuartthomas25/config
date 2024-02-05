@@ -136,7 +136,8 @@ myKeyBindings conf@(XConfig {XMonad.modMask = modm}) =
     , KeyBinding (modm .|. mod1Mask )     xK_9           "Launch Spotify"                                   $    spawn "spotify"
     , KeyBinding (modm .|. shiftMask)     xK_t           "launch toggl"                                     $    spawn $ togglExec ++ " www"
     , KeyBinding modm                     xK_semicolon   "start/stop toggl"                                 $    spawn "~/bin/mytoggl startstop"
-    , KeyBinding (modm .|. shiftMask)     xK_semicolon   "start/stop toggl"                                 $    spawn "~/bin/mytoggl status"
+    , KeyBinding (modm .|. shiftMask)     xK_semicolon   "view toggl status"                                $    spawn "~/bin/mytoggl status"
+    , KeyBinding (modm .|. mod1Mask )     xK_semicolon   "change toggl project"                             $    spawn "~/bin/mytoggl switch"
     , KeyBinding (modm .|. shiftMask)     xK_b           "connect headphones"                               $    spawn $ "bluetoothctl connect AC:BF:71:64:22:CA"
     -- , KeyBinding (modm .|. shiftMask)     xK_e           "restart emacs"                                    $    spawn $ myQuitEmacs ++ "; " ++ myEmacsServer
     , KeyBinding (modm .|. shiftMask)     xK_e           "restart emacs"                                    $    spawn $ "systemctl --user restart emacs"
@@ -250,6 +251,7 @@ myManageHook = composeAll
     , className =? "Gimp"           --> doFloat
     , title     =? "Toggl Track"    --> doFloat
     , resource  =? "desktop_window" --> doIgnore
+    , resource  =? "zenity" --> doFloat
     , resource  =? "kdesktop"       --> doIgnore
     , title =? "Spotify"     --> doShift ( myWorkspaces !! 9 )
                         ]

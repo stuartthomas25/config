@@ -163,17 +163,23 @@ When searching, automatically place the match in the center
 #+BEGIN_SRC emacs-lisp
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/org/")
-(add-hook 'org-mode-hook #'org-indent-mode)
-(add-hook 'org-mode-hook #'org-hide-block-all)
-(add-hook 'org-mode-hook #'org-inline-pdf-mode)
-(add-hook 'org-mode-hook '(lambda () (require 'org-ref)))
 
+(use-package! org-modern)
 (after! org
+        (setq org-directory "~/org/")
+        (add-hook 'org-mode-hook #'org-indent-mode)
+        (add-hook 'org-mode-hook #'org-hide-block-all)
+        (add-hook 'org-mode-hook #'org-inline-pdf-mode)
+        (add-hook 'org-mode-hook '(lambda () (require 'org-ref)))
         (setq org-startup-indented t)
+        (setq org-agenda-files '("~/org/journal.org"))
         (setq org-startup-with-latex-preview  t)
         (setq org-startup-with-inline-images t)
-        (plist-put org-format-latex-options :scale 1.5))
+        (plist-put org-format-latex-options :scale 1.5)
+        (add-hook 'org-mode-hook #'org-modern-mode)
+        (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
+        ;; (add-hook 'org-mode-hook #'org-inline-pdf-mode)
+        )
 
 
 (defun org-latex-preview-buffer ()
@@ -188,10 +194,6 @@ When searching, automatically place the match in the center
   :defer t
   :hook (org-mode . org-auto-tangle-mode))
 
-(use-package! org-modern)
-(add-hook 'org-mode-hook #'org-modern-mode)
-(add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
-;; (add-hook 'org-mode-hook #'org-inline-pdf-mode)
 
 (defconst snt/org-babel-do-not-edit-header "
 ################################################
@@ -762,9 +764,6 @@ apps are not started from a shell."
 
 #+END_SRC
 
-#+RESULTS:
-| (lambda nil (set-input-method 'julia)) | julia-repl-mode |
-
 * Flyspell
 #+BEGIN_SRC emacs-lisp
 (after! flycheck
@@ -891,14 +890,14 @@ concatenated."
 Add new day if necessary, otherwise, add to current day."
   (interactive)
   (find-file "~/org/journal.org")
-  (let* ((date (calendar-current-date))
-     (year (elt date 2))
-     (month (elt date 0))
-     (day (elt date 1)))
-    (org-datetree-find-date-create (list month day year)))
+  ;; (let* ((date (calendar-current-date))
+  ;;    (year (elt date 2))
+  ;;    (month (elt date 0))
+  ;;    (day (elt date 1)))
+  ;;   (org-datetree-find-date-create (list month day year)))
   (save-restriction
-    (org-narrow-to-subtree)
+    ;; (org-narrow-to-subtree)
     (goto-char (point-max))
-    (insert (format "\n**** %s" (format-time-string "[%Y-%m-%d %a %H:%M] ")))))
+    (insert (format "\n* %s" (format-time-string "[%Y-%m-%d %a %H:%M] ")))))
 
 #+end_src

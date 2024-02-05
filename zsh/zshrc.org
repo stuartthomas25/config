@@ -3,7 +3,7 @@
 #+STARTUP: fold
 #+auto_tangle: t
 
-#+begin_src bash
+#+begin_src zsh
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 #
@@ -118,7 +118,7 @@ source $ZSH/oh-my-zsh.sh
 #+end_src
 
 * Aliases
-#+begin_src bash
+#+begin_src zsh
 # if [[ -z $DISPLAY ]]; then
 #     alias e='emacsclient'
 # else
@@ -158,7 +158,7 @@ esac
 #+end_src
 
 Custom path
-#+begin_src bash
+#+begin_src zsh
 export PATH=$HOME/bin:$HOME/.emacs.d/bin:$PATH
 export PATH=$HOME/.elan/bin:$PATH
 export XDG_DATA_DIRS=$HOME/.local/share/:$XDG_DATA_DIRS
@@ -167,7 +167,7 @@ export XDG_DATA_DIRS=$HOME/.local/share/:$XDG_DATA_DIRS
 #+RESULTS:
 
 * Config things
-#+begin_src bash
+#+begin_src zsh
 checkupdates() {
     git fetch > /dev/null 2>&1
     if [[ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]]; then
@@ -197,7 +197,7 @@ config() (
 #+end_src
 
 * Anaconda
-#+begin_src bash
+#+begin_src zsh
 case $(hostname) in
     Sarabi*)
         if [ $(arch) = 'arm64' ]; then
@@ -225,7 +225,7 @@ unset __conda_setup
 #+end_src
 
 * ITerm integration
-#+begin_src bash
+#+begin_src zsh
 if [[ "$TERM" == 'xterm-256color' && -e "${HOME}/.iterm2_shell_integration.zsh" ]]; then
     test  && source "${HOME}/.iterm2_shell_integration.zsh"
     export ITERM2_SQUELCH_MARK=1
@@ -236,7 +236,7 @@ fi
 #+RESULTS:
 
 * Slurm tools
-#+begin_src bash
+#+begin_src zsh
 alias wsq="watch -t \"squeue -u $USER -o '%.10i %.5P %.20j %.2t %.11L %.10M %.2D %.2C %R'\""
 alias sq="squeue -u $USER -o '%.10i %.5P %.20j %.2t %.11L %.10M %.2D %.2C %R'"
 function catlatest () {
@@ -250,6 +250,6 @@ esac
 #+end_src
 
 * OCaml
-#+begin_src bash
+#+begin_src zsh
 [[ ! -r /Users/stuart/.opam/opam-init/init.zsh ]] || source /Users/stuart/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
 #+end_src

@@ -75,6 +75,7 @@
 (package! org-roam-server)
 (package! julia-quail :recipe (:host github :repo "stuartthomas25/julia-quail"))
 (package! polymode)
+(package! arxiv-mode)
 (package! calibredb)
 (package! lean4-mode :recipe
   (:host github

@@ -4,10 +4,13 @@ TOGGL_EXEC=$HOME/miniconda3/bin/toggl
 NITROGEN_DIR=$HOME/.config/nitrogen
 
 current_info=$($TOGGL_EXEC --no-header now)
+[[ $current_info =~ "#" ]]
+running=$?
 projectname=$(echo "$current_info" | sed -n "4p" | sed -e 's/ (#\w\+)//')
 case $1 in
     startstop)
-        if [[ -z $projectname ]]; then
+        if [ $running = 1 ]; then
+            # start timer
             if $TOGGL_EXEC continue; then
                 projectname=$($TOGGL_EXEC --no-header now | sed -n "4p" | sed -e 's/ (#\w\+)//')
                 notify-send "Resuming \"$projectname\"..." "" -t 5000
@@ -31,21 +34,37 @@ case $1 in
         fi
         ;;
     status)
-        if ! [[ -z $projectname ]]; then
+        if [ $running = 0 ]; then
             time=$(echo $current_info | sed -n "3p")
             notify-send "\"$projectname\" is running" "Elapsed time: $time" -t 5000
         else
 
+            
             notify-send "Nothing is running!" -t 5000
         fi
         ;;
     watch)
-        if ! [[ -z $projectname ]]; then
+        if [ $running = 0 ]; then
             time=$(echo $current_info | sed -n "3p")
             if [[ "$time" > "0:25:00" ]]; then
                 notify-send -u critical "Take a Break!" "Project \"$projectname\" has reached $time" -t 60000
             fi
         fi
+        ;;
+    switch)
+        newproj=$(  $TOGGL_EXEC --no-header projects ls -f "name" |
+                    sed -e 's/^ //g' |
+                    zenity --list \
+                        --height=600 \
+                        --title="Change Toggl Project" \
+                        --text="Currently $projectname" \
+                        --print-column=1 \
+                        --column="Project"
+                        )
+        $TOGGL_EXEC now --project "$newproj"
+
+            # --hide-column=1 \
+            # --column="ID" \
         ;;
     *)
         echo "usage: mytoggl (startstop|status|watch)"

@@ -312,7 +312,7 @@ When searching, automatically place the match in the center
 #+RESULTS:
 : t
 
-* Mu4e
+* Mu4e (Email)
 #+BEGIN_SRC emacs-lisp
 (after! mu4e
   (set-email-account!
@@ -326,7 +326,6 @@ When searching, automatically place the match in the center
   (setq org-msg-signature "
 
 ,#+begin_signature
-Best wishes, \\\\
 Stuart Thomas (he/him) \\\\
 snthomas@umd.edu \\\\
 +1 (407) 701-7788
@@ -543,7 +542,6 @@ Auto import
   (string-match "@\\(\\w*\\){\\(.*\\),\n" citation)
 )
 #+end_src
-
 
 * DOI System
 #+BEGIN_SRC emacs-lisp

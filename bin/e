@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ -z $DISPLAY ]; then
+if [ -z $DISPLAY ] && [ -z $WAYLAND_DISPLAY ]; then
     stem='emacsclient'
 else
     stem='emacsclient -c'

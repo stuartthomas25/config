@@ -83,10 +83,12 @@ Some functionality uses this to identify you, e.g. GPG configuration, email clie
 #+END_SRC
 
 * Editor
-
 This determines the style of line numbers in effect. If set to `nil', line numbers are disabled. For relative line numbers, set this to `relative'.
 #+begin_src emacs-lisp
 (setq display-line-numbers-type 'visual)
+#+end_src
+
+#+begin_src emacs-lisp
 (setq doom-inhibit-large-file-detection t)
 
 (map! :n "Q" #'evil-record-macro)
@@ -113,6 +115,11 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 (map! :leader :desc "Swap Workspace Left" :g "TAB ]" #'+workspace/swap-right)
 (map! :leader :desc "Swap Workspace Right" :g "TAB [" #'+workspace/swap-left)
 
+(after! workspaces
+  (setq persp-emacsclient-init-frame-behaviour-override -1)
+  (setq persp-interactive-init-frame-behaviour-override -1)
+  (setq persp-init-frame-behaviour nil))
+
 ;; (map! :n "M-RET" #'(lambda () (interactive) (+evil/insert-newline-above 1) (evil-next-line)))
 ;; (map! :n "RET" #'(lambda () (interactive) (+evil/insert-newline-below 1) (evil-next-line)))
 
@@ -128,7 +135,6 @@ When searching, automatically place the match in the center
 (advice-add 'evil-ex-search-previous :after
             (lambda (&rest x) (evil-scroll-line-to-center (line-number-at-pos))))
 #+end_src
-
 
 ** Ligatures
 #+begin_src emacs-lisp
@@ -306,7 +312,7 @@ When searching, automatically place the match in the center
 #+RESULTS:
 : t
 
-* Mu4e
+* Mu4e (Email)
 #+BEGIN_SRC emacs-lisp
 (after! mu4e
   (set-email-account!
@@ -320,7 +326,6 @@ When searching, automatically place the match in the center
   (setq org-msg-signature "
 
 ,#+begin_signature
-Best wishes, \\\\
 Stuart Thomas (he/him) \\\\
 snthomas@umd.edu \\\\
 +1 (407) 701-7788
@@ -538,17 +543,21 @@ Auto import
 )
 #+end_src
 
-
 * DOI System
 #+BEGIN_SRC emacs-lisp
 (defconst doi-regex "10\\.[0-9]\\{4,5\\}\\/[^;, {}\"]+")
 (defun my/doi-to-reference ()
   (interactive)
-  (let ((line (thing-at-point 'line t)))
+  (let ((line (thing-at-point 'line t))
+        (is-bibtex-block-p (string-equal (car (org-babel-get-src-block-info)) "bibtex")))
     (string-match doi-regex line)
     (let ((doi (match-string 0 line)))
       (kill-whole-line)
-      (biblio-doi-insert-bibtex doi))))
+      (unless is-bibtex-block-p
+        (insert "#+begin_src bibtex\n\n#+end_src")
+        (previous-line))
+      (biblio-doi-insert-bibtex doi)
+      )))
 
 (map! (:map bibtex-mode-map :localleader "D" :desc "Replace DOI in line with Bibtex reference" #'my/doi-to-reference))
 (map! (:map org-mode-map :localleader "D" :desc "Replace DOI in line with Bibtex reference" #'my/doi-to-reference))

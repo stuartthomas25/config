@@ -93,6 +93,7 @@ prompt_context() {
   # fi
   case "$(hostname)" in
      Sarabi*)  OS_LOGO="🦁 " ;;
+     mufasa*)  OS_LOGO="🦁 " ;;
      roxie*)   OS_LOGO="🐧" ;;
      millie*)   OS_LOGO="🧑" ;;
      *zaratan*)   OS_LOGO="🐢" ;;
@@ -237,7 +238,7 @@ prompt_virtualenv() {
       if ! [[ $(basename $CONDA_PREFIX) == "miniconda3" || $(basename $CONDA_PREFIX) == "miniforge3" ]]; then
         # For no environment, hide "(base)"
         # For all environments that aren't (base)
-        prompt_segment 3 0 "($(basename $CONDA_PREFIX)) "
+        prompt_segment 3 0 "($(basename $CONDA_PREFIX)) test"
       fi
   # When no conda environment is active, don't show anything
   else

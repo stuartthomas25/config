@@ -14,7 +14,7 @@ Some functionality uses this to identify you, e.g. GPG configuration, email clie
 * General
 #+begin_src emacs-lisp
 ;; (setq recentf-exclude (append '("^/home/stuart/.emacs.d/.local/etc/bookmarks" "^/home/stuart/.emacs.d/.local/etc/workspaces/autosave") recentf-exclude))
-(setq recentf-exclude '("^/home/stuart/.emacs.d/.local/etc/bookmarks" "^/home/stuart/.emacs.d/.local/etc/workspaces/autosave" "^/home/stuart/.emacs.d/.local/cache"))
+(setq recentf-exclude '("^/home/stuart/.emacs.d/.local/" "^/home/stuart/.emacs.d/.local/etc/workspaces/autosave" "^/home/stuart/.emacs.d/.local/cache"))
 #+end_src
 
 * PDFs

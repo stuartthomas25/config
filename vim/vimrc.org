@@ -61,6 +61,7 @@ call plug#begin('~/.vim/plugged')
   Plug 'scrooloose/nerdcommenter'
   Plug 'morhetz/gruvbox'
   Plug 'dylanaraps/wal.vim'
+  Plug 'JuliaEditorSupport/julia-vim'
 call plug#end()
 
 nnoremap <leader>n :NERDTreeToggleVCS<CR>

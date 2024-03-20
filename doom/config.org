@@ -109,16 +109,6 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 ;; (map! :desc "Next Tab" :rn "J" #'+workspace/switch-right)
 ;; (map! :desc "Previous Tab" :rn "K" #'+workspace/switch-left)
 
-(map! :leader :desc "Next Tab" :g "l" #'+workspace/switch-right)
-(map! :leader :desc "Previous Tab" :g "L" #'+workspace/switch-left)
-
-(map! :leader :desc "Swap Workspace Left" :g "TAB ]" #'+workspace/swap-right)
-(map! :leader :desc "Swap Workspace Right" :g "TAB [" #'+workspace/swap-left)
-
-(after! workspaces
-  (setq persp-emacsclient-init-frame-behaviour-override -1)
-  (setq persp-interactive-init-frame-behaviour-override -1)
-  (setq persp-init-frame-behaviour nil))
 
 ;; (map! :n "M-RET" #'(lambda () (interactive) (+evil/insert-newline-above 1) (evil-next-line)))
 ;; (map! :n "RET" #'(lambda () (interactive) (+evil/insert-newline-below 1) (evil-next-line)))
@@ -152,6 +142,21 @@ When searching, automatically place the match in the center
                                      "<*>" "<|" "<|>" "<$" "<$>" "<!--" "<-" "<--" "<->" "<+"
                                      "<+>" "<=" "<==" "<=>" "<=<" "<>" "<<" "<<-" "<<=" "<<<"
                                      "<~" "<~~" "</" "</>" "~@" "~-" "~>" "~~" "~~>" "%%"))
+#+end_src
+
+* Workspaces
+#+begin_src emacs-lisp
+(map! :leader :desc "Next Tab" :g "l" #'+workspace/switch-right)
+(map! :leader :desc "Previous Tab" :g "L" #'+workspace/switch-left)
+
+(map! :leader :desc "Swap Workspace Left" :g "TAB ]" #'+workspace/swap-right)
+(map! :leader :desc "Swap Workspace Right" :g "TAB [" #'+workspace/swap-left)
+
+(after! workspaces
+  (setq persp-emacsclient-init-frame-behaviour-override -1)
+  (setq persp-interactive-init-frame-behaviour-override -1)
+  (setq persp-autokill-buffer-on-remove nil)
+  (setq persp-init-frame-behaviour nil))
 #+end_src
 
 * Custom Keyboard Maps

@@ -56,7 +56,8 @@ case $1 in
         if [ $running = 0 ]; then
             time=$(echo $current_info | sed -n "3p")
             if [[ "$time" > "0:25:00" ]]; then
-                notify "Take a Break!" "Project \"$projectname\" has reached $time"
+                # notify "Take a Break!" "Project \"$projectname\" has reached $time"
+-               notify-send -u critical "Take a Break!" "Project \"$projectname\" has reached $time" -t 60000
             fi
         fi
         ;;

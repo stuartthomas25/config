@@ -77,6 +77,7 @@
 (package! polymode)
 (package! arxiv-mode)
 (package! calibredb)
+(package! slurm-mode)
 (package! lean4-mode :recipe
   (:host github
    :repo "leanprover/lean4-mode"

@@ -42,6 +42,15 @@ case $1 in
             fi
         fi
         ;;
+
+    info)
+        if [ $running = 0 ]; then
+            time=$(echo $current_info | sed -n "3p")
+            echo "$time"
+            echo "$projectname"
+        fi
+        ;;
+
     status)
         if [ $running = 0 ]; then
             time=$(echo $current_info | sed -n "3p")

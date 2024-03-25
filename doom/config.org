@@ -295,9 +295,8 @@ When searching, automatically place the match in the center
     (dashboard-modify-heading-icons '((mail . "mail")))
     (add-to-list 'dashboard-item-generators  '(mail . snt/dashboard-insert-mail))
     (dashboard-setup-startup-hook)
-    (setq dashboard-set-footer nil)
+    (setq dashboard-startupify-list (cl-set-difference dashboard-startupify-list '(dashboard-insert-init-info dashboard-insert-footer)))
     (setq dashboard-force-refresh t)
-    (setq dashboard-set-init-info nil)
     (setq dashboard-filter-agenda-entry 'dashboard-filter-agenda-by-todo)
                                         ;(add-hook 'dashboard-mode-hook #'dashboard-refresh-buffer)
     ;; (dashboard-modify-heading-icons '((recents . "file-text")
@@ -308,9 +307,6 @@ When searching, automatically place the match in the center
     (setq doom-fallback-buffer-name "*dashboard*"))
 
 #+END_SRC
-
-#+RESULTS:
-: t
 
 * Mu4e (Email)
 #+BEGIN_SRC emacs-lisp

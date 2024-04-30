@@ -155,6 +155,7 @@ When searching, automatically place the match in the center
 (after! workspaces
   (setq persp-emacsclient-init-frame-behaviour-override -1)
   (setq persp-interactive-init-frame-behaviour-override -1)
+  (setq persp-autokill-persp-when-removed-last-buffer nil)
   (setq persp-autokill-buffer-on-remove nil)
   (setq persp-init-frame-behaviour nil))
 #+end_src

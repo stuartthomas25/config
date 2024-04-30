@@ -186,6 +186,7 @@ When searching, automatically place the match in the center
         (setq org-agenda-files '("~/org/journal.org"))
         (setq org-startup-with-latex-preview  t)
         (setq org-startup-with-inline-images t)
+        (setq org-image-actual-width '(0.9))
         (plist-put org-format-latex-options :scale 1.5)
         (add-hook 'org-mode-hook #'org-modern-mode)
         (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)

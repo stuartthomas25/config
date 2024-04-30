@@ -242,6 +242,7 @@ When searching, automatically place the match in the center
 
 * Dashboard
 #+BEGIN_SRC emacs-lisp
+(require 's)
 (defun snt/s-truncate (LEN STR)
   " like s-truncate but adds spaces if the string is shorter than LEN"
   (let ((stem (s-truncate LEN STR)))

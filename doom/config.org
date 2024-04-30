@@ -808,6 +808,8 @@ concatenated."
    (lambda (author) (plist-get author :name))
    authors-list ", "))
 
+(setq elfeed-search-title-max-width 150)
+
 (defun my-search-print-fn (entry)
   "Print ENTRY to the buffer."
   (let* ((date (elfeed-search-format-date (elfeed-entry-date entry)))
@@ -833,12 +835,12 @@ concatenated."
 			       title-width
 			       elfeed-search-title-max-width)
 			:left))
-	 (authors-width 135)
+	 (authors-width 90)
 	 (authors-column (elfeed-format-column
 			entry-authors (elfeed-clamp
 			       elfeed-search-title-min-width
 			       authors-width
-			       131)
+			       89)
 			:left)))
 
     ;; (insert (propertize date 'face 'elfeed-search-date-face) " ")
@@ -863,7 +865,8 @@ concatenated."
 
     )
   )
-(setq elfeed-search-print-entry-function #'my-search-print-fn)
+(after! elfeed-goodies
+        (setq elfeed-search-print-entry-function #'my-search-print-fn))
 #+END_SRC
 
 * Projectile

@@ -457,7 +457,6 @@ Make sure PDF Tools is the first viewing option on the list
 
 * Bibliography
 #+BEGIN_SRC emacs-lisp
-
 (setq bibtex-completion-pdf-field "File")
 
 (defun my/bibtex-open-pdf (url &optional other)
@@ -466,7 +465,7 @@ Make sure PDF Tools is the first viewing option on the list
 
 (setq bibtex-completion-browser-function 'my/bibtex-open-pdf)
 
-
+(require 'projectile)
 (defun my/find-bib ()
   (interactive)
   (let ((root (projectile-acquire-root)))
@@ -552,18 +551,39 @@ Auto import
 * DOI System
 #+BEGIN_SRC emacs-lisp
 (defconst doi-regex "10\\.[0-9]\\{4,5\\}\\/[^;, {}\"]+")
-(defun my/doi-to-reference ()
-  (interactive)
-  (let ((line (thing-at-point 'line t))
-        (is-bibtex-block-p (string-equal (car (org-babel-get-src-block-info)) "bibtex")))
-    (string-match doi-regex line)
-    (let ((doi (match-string 0 line)))
+(defconst arxiv-code-regex "arxiv[:.]\\([0-9]\\{4\\}\\.[0-9]\\{4,5\\}\\(v[0-9]+\\)*\\)$")
+(defconst arxiv-old-code-regex "arxiv[:.]\\([-a-z]+\\/[0-9]\\{7\\}\\(v[0-9]+\\)*\\)$")
+(defconst arxiv-link-regex "arxiv\\.org\\/\\(abs\\|pdf\\)\\/\\([0-9]\\{4,5\\}\\.[0-9]\\{5\\}\\(v[0-9]+\\)*\\)")
+(defconst arxiv-old-link-regex "arxiv\\.org\\/\\(abs\\|pdf\\)\\/\\([-a-z]+\\/[0-9]\\{7\\}\\(v[0-9]+\\)*\\)")
+;; 10.48550/arXiv.2111.11942
+
+(defun my/insert-doi (doi)
       (kill-whole-line)
       (unless is-bibtex-block-p
         (insert "#+begin_src bibtex\n\n#+end_src")
         (previous-line))
-      (biblio-doi-insert-bibtex doi)
-      )))
+      (biblio-doi-insert-bibtex doi))
+
+(defun my/doi-to-reference ()
+  (interactive)
+  (let ((line (thing-at-point 'line t))
+        (is-bibtex-block-p (string-equal (car (org-babel-get-src-block-info)) "bibtex")))
+    (cond
+
+    ;; ((string-match arxiv-code-regex line)
+    ;; (let ((doi (match-string 0 line)))
+    ;;   (kill-whole-line)
+    ;;   (unless is-bibtex-block-p
+    ;;     (insert "#+begin_src bibtex\n\n#+end_src")
+    ;;     (previous-line))
+    ;;   (biblio-doi-insert-bibtex doi)))
+
+
+    ((string-match arxiv-code-regex line) (my/insert-doi (format "10.48550/arXiv.%s" (match-string 1 line))))
+    ((string-match arxiv-old-code-regex line) (my/insert-doi (format "10.48550/arXiv.%s" (match-string 1 line))))
+    ((string-match arxiv-link-regex line) (my/insert-doi (format "10.48550/arXiv.%s" (match-string 2 line))))
+    ((string-match arxiv-old-link-regex line) (my/insert-doi (format "10.48550/arXiv.%s" (match-string 2 line))))
+    ((string-match doi-regex line) (my/insert-doi (match-string 0 line))))))
 
 (map! (:map bibtex-mode-map :localleader "D" :desc "Replace DOI in line with Bibtex reference" #'my/doi-to-reference))
 (map! (:map org-mode-map :localleader "D" :desc "Replace DOI in line with Bibtex reference" #'my/doi-to-reference))
@@ -633,10 +653,10 @@ STATUS: the status"
   (message "Opening link: %s" uri)
   (unless default-open-function (setq default-open-function #'browse-url-default-browser))
   (cond
-        ((string-match "arxiv[:.]\\([0-9]\\{4\\}\\.[0-9]\\{4,5\\}\\(v[0-9]+\\)*\\)$" uri) (open-arxiv (match-string 1 uri) fname)) ;; new style, DOI
-        ((string-match "arxiv[:.]\\([-a-z]+\\/[0-9]\\{7\\}\\(v[0-9]+\\)*\\)$" uri) (open-arxiv (match-string 1 uri) fname)) ;;old style, DOI
-        ((string-match "arxiv\\.org\\/\\(abs\\|pdf\\)\\/\\([0-9]\\{4,5\\}\\.[0-9]\\{5\\}\\(v[0-9]+\\)*\\)" uri) (open-arxiv (match-string 2 uri) fname)) ;; new style, url
-        ((string-match "arxiv\\.org\\/\\(abs\\|pdf\\)\\/\\([-a-z]+\\/[0-9]\\{7\\}\\(v[0-9]+\\)*\\)" uri) (open-arxiv (match-string 2 uri) fname)) ;; old style, url
+        ((string-match arxiv-code-regex uri) (open-arxiv (match-string 1 uri) fname)) ;; new style, DOI
+        ((string-match arxiv-old-code-regex uri) (open-arxiv (match-string 1 uri) fname)) ;; old style, DOI
+        ((string-match arxiv-link-regex uri) (open-arxiv (match-string 2 uri) fname)) ;; new style, url
+        ((string-match arxiv-old-link-regex uri) (open-arxiv (match-string 2 uri) fname)) ;; old style, url
         ((string-match doi-regex uri) (open-doi (match-string 0 uri) fname))
         ( t (funcall default-open-function uri))))
 
@@ -786,7 +806,7 @@ apps are not started from a shell."
 #+RESULTS:
 | TeX-revert-document-buffer |
 
-* ElFeed
+* ElFeed (ArXiv)
 #+BEGIN_SRC emacs-lisp
 (setq rmh-elfeed-org-files '("~/org/elfeed.org"))
 (add-hook! 'elfeed-search-mode-hook 'elfeed-update)
@@ -804,16 +824,19 @@ apps are not started from a shell."
 
 Add authors to elfeed (see https://cundy.me/post/elfeed/)
 #+BEGIN_SRC emacs-lisp
+(defun remove-first-names (authors)
+  (mapconcat (lambda (author) (car (last (s-split " " author)))) (s-split ", " authors) ", "))
+
 (defun concatenate-authors (authors-list)
   "Given AUTHORS-LIST, list of plists; return string of all authors
 concatenated."
   (mapconcat
-   (lambda (author) (plist-get author :name))
+   (lambda (authors) (remove-first-names (plist-get authors :name)))
    authors-list ", "))
 
 (setq elfeed-search-title-max-width 150)
 
-(defun my-search-print-fn (entry)
+(defun my/elfeed-search-print-fn (entry)
   "Print ENTRY to the buffer."
   (let* ((date (elfeed-search-format-date (elfeed-entry-date entry)))
 	 (title (or (elfeed-meta entry :title)
@@ -838,7 +861,7 @@ concatenated."
 			       title-width
 			       elfeed-search-title-max-width)
 			:left))
-	 (authors-width 90)
+	 (authors-width 30)
 	 (authors-column (elfeed-format-column
 			entry-authors (elfeed-clamp
 			       elfeed-search-title-min-width
@@ -848,12 +871,13 @@ concatenated."
 
     ;; (insert (propertize date 'face 'elfeed-search-date-face) " ")
 
-    (insert (propertize title-column
-			'face title-faces 'kbd-help title) " ")
-
     (insert (propertize authors-column
 			'face 'elfeed-search-date-face
 			'kbd-help entry-authors) " ")
+
+    (insert (propertize title-column
+			'face title-faces 'kbd-help title) " ")
+
 
     ;; (when feed-title
     ;;   (insert (propertize entry-authors
@@ -868,8 +892,61 @@ concatenated."
 
     )
   )
+
+(defun my/elfeed-search-header () nil)
+
+(defun my/elfeed-show-refresh ()
+  "Update the buffer to match the selected entry, using a mail-style."
+  (interactive)
+  (let* ((inhibit-read-only t)
+         (title (elfeed-entry-title elfeed-show-entry))
+         (date (seconds-to-time (elfeed-entry-date elfeed-show-entry)))
+         (authors (elfeed-meta elfeed-show-entry :authors))
+         (link (elfeed-entry-link elfeed-show-entry))
+         (tags (elfeed-entry-tags elfeed-show-entry))
+         (tagsstr (mapconcat #'symbol-name tags ", "))
+         (nicedate (format-time-string "%a, %e %b %Y %T %Z" date))
+         (content (elfeed-deref (elfeed-entry-content elfeed-show-entry)))
+         (type (elfeed-entry-content-type elfeed-show-entry))
+         (feed (elfeed-entry-feed elfeed-show-entry))
+         (feed-title (elfeed-feed-title feed))
+         (base (and feed (elfeed-compute-base (elfeed-feed-url feed)))))
+    (erase-buffer)
+    (insert (format (propertize "Title: %s\n" 'face 'message-header-name)
+                    (propertize title 'face 'message-header-subject)))
+    (when elfeed-show-entry-author
+      (dolist (author authors)
+        (let ((formatted (elfeed--show-format-author author)))
+          (insert
+           (format (propertize "Author: %s\n" 'face 'message-header-name)
+                   (propertize formatted 'face 'message-header-to))))))
+    (insert (format (propertize "Date: %s\n" 'face 'message-header-name)
+                    (propertize nicedate 'face 'message-header-other)))
+    (insert (format (propertize "Feed: %s\n" 'face 'message-header-name)
+                    (propertize feed-title 'face 'message-header-other)))
+    (when tags
+      (insert (format (propertize "Tags: %s\n" 'face 'message-header-name)
+                      (propertize tagsstr 'face 'message-header-other))))
+    (insert (propertize "Link: " 'face 'message-header-name))
+    (elfeed-insert-link link link)
+    (insert "\n")
+    (cl-loop for enclosure in (elfeed-entry-enclosures elfeed-show-entry)
+             do (insert (propertize "Enclosure: " 'face 'message-header-name))
+             do (elfeed-insert-link (car enclosure))
+             do (insert "\n"))
+    (insert "\n")
+    (if content
+        (if (eq type 'html)
+            (elfeed-insert-html content base)
+          (insert content))
+      (insert (propertize "(empty)\n" 'face 'italic)))
+    (goto-char (point-min))))
+
+(require 'elfeed-goodies)
 (after! elfeed-goodies
-        (setq elfeed-search-print-entry-function #'my-search-print-fn))
+        (setq elfeed-search-print-entry-function #'my/elfeed-search-print-fn)
+        (setq elfeed-search-header-function #'my/elfeed-search-header)
+        (setq elfeed-show-refresh-function #'my/elfeed-show-refresh))
 #+END_SRC
 
 * Projectile

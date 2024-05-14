@@ -61,11 +61,11 @@
 (package! helm-bibtex)
 (package! org-ref)
 ;; (package! org-latex-impatient)
-;; (package! ob-julia-vterm)
-(package! ob-julia-vterm :recipe
-  (:host github
-   :repo "stuartthomas25/ob-julia-vterm.el"
-   :files ("*.el")))
+(package! ob-julia-vterm)
+;; (package! ob-julia-vterm :recipe
+;;   (:host github
+;;    :repo "shg/ob-julia-vterm.el"
+;;    :files ("*.el")))
 (package! org-auto-tangle)
 (package! wolfram-mode)
 (package! ob-mathematica)

@@ -155,6 +155,7 @@ case $(hostname) in
         ;;
 esac
 
+alias f="tail -n+1 -f"
 #+end_src
 
 Custom path
@@ -174,7 +175,7 @@ checkupdates() {
         echo "Config updates available!"
     fi
 }
-(cd $CONFIG && checkupdates)
+# (cd $CONFIG && checkupdates)
 
 config() (
     cd $CONFIG

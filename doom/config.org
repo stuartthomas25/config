@@ -220,7 +220,8 @@ When searching, automatically place the match in the center
 (defun snt/add-header ()
         (goto-char 0)
         (let ((comment-char (cl-case major-mode
-                              ('haskell-mode "-- ")
+                              ('haskell-mode "--")
+                              ('vimrc-generic-mode "\"")
                               ('emacs-lisp-mode ";")
                               (t "#"))))
           (message "Here: %s" comment-char)
@@ -993,4 +994,22 @@ Add new day if necessary, otherwise, add to current day."
     (goto-char (point-max))
     (insert (format "\n* %s" (format-time-string "[%Y-%m-%d %a %H:%M] ")))))
 
+#+end_src
+
+* Custom Modses
+[[http://code.google.com/p/dot-emacs/source/browse/trunk/wenbinye/config/20-func.el][Vim mode]]
+#+begin_src emacs-lisp
+(define-generic-mode 'vimrc-generic-mode
+    '()
+    '()
+    '(("^[\t ]*:?\\(!\\|ab\\|map\\|unmap\\)[^\r\n\"]*\"[^\r\n\"]*\\(\"[^\r\n\"]*\"[^\r\n\"]*\\)*$"
+       (0 font-lock-warning-face))
+      ("\\(^\\|[\t ]\\)\\(\".*\\)$"
+      (2 font-lock-comment-face))
+      ("\"\\([^\n\r\"\\]\\|\\.\\)*\""
+       (0 font-lock-string-face)))
+    '("/vimrc\\'" "\\.vim\\(rc\\)?\\'")
+    '((lambda ()
+        (modify-syntax-entry ?\" ".")))
+    "Generic mode for Vim configuration files.")
 #+end_src

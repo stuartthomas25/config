@@ -152,12 +152,15 @@ When searching, automatically place the match in the center
 (map! :leader :desc "Swap Workspace Left" :g "TAB ]" #'+workspace/swap-right)
 (map! :leader :desc "Swap Workspace Right" :g "TAB [" #'+workspace/swap-left)
 
-(after! workspaces
-  (setq persp-emacsclient-init-frame-behaviour-override -1)
-  (setq persp-interactive-init-frame-behaviour-override -1)
-  (setq persp-autokill-persp-when-removed-last-buffer nil)
-  (setq persp-autokill-buffer-on-remove nil)
-  (setq persp-init-frame-behaviour nil))
+
+(use-package! persp-mode
+  :config
+  (setq persp-emacsclient-init-frame-behaviour-override -1 ;; no new workspace on new frame
+        persp-interactive-init-frame-behaviour-override -1
+        persp-autokill-persp-when-removed-last-buffer nil
+        persp-autokill-buffer-on-remove nil
+        persp-init-frame-behaviour nil))
+
 #+end_src
 
 * Custom Keyboard Maps

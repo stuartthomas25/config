@@ -400,6 +400,7 @@ snthomas@umd.edu \\\\
   (mu4e-update-mail-and-index t))
 
 (require 'mu4e)
+(mu4e--init-handlers) ;; not sure why I have to do this, otherwise Emacs throws an error every time it auto-updates until I open mu4e.
 #+END_SRC
 
 Show images by default

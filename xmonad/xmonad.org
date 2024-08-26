@@ -168,6 +168,7 @@ myKeyBindings conf@(XConfig {XMonad.modMask = modm}) =
     , KeyBinding (modm .|. shiftMask)     xK_q           "Quit xmonad"                                      $    myExit
     , KeyBinding (modm .|. shiftMask)     xK_c           "Restart xmonad"                                   $    spawn "xmonad --recompile; xmonad --restart"
     , KeyBinding (modm .|. shiftMask)     xK_slash       "Display this help popup"                          $    spawn $ "notify-send --wait \"XMonad Help\" \"" ++ (help conf) ++ "\""
+    , KeyBinding noModMask                xK_Print       "Foot Pedal Press"                                 $    spawn $ "~/bin/footpedal"
   --, KeyBinding (modm .|. shiftMask)     xK_slash       "Display this help popup"                          $    spawn ("echo \"" ++ (help conf) ++ "\" | xmessage -file -")
     ]
     ++

@@ -986,7 +986,7 @@ concatenated."
 (use-package! calibredb
   :defer t
   :config
-  (setq calibredb-root-dir "~/Library")
+  (setq calibredb-root-dir "~/Textbooks")
   (setq calibredb-format-all-the-icons t)
   (setq calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir))
   (setq calibredb-library-alist '(("~/Library")))

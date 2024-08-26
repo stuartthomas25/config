@@ -813,13 +813,30 @@ apps are not started from a shell."
 
 * ElFeed (ArXiv)
 #+BEGIN_SRC emacs-lisp
-(setq rmh-elfeed-org-files '("~/org/elfeed.org"))
+;; (setq rmh-elfeed-org-files '("~/org/elfeed.org"))
 (add-hook! 'elfeed-search-mode-hook 'elfeed-update)
+
+(defun elfeed-record-opening ()
+  (message "%s" (elfeed-entry-title elfeed-show-entry))
+  (let* ((e elfeed-show-entry)
+         (id (cdr (elfeed-entry-id e))))
+    (shell-command (format "/home/stuart/miniconda3/envs/rss/bin/python /home/stuart/Desktop/rss/mark_entry.py \"%s\"" id))
+    (message "Marking %s" id)))
+
 (after! elfeed
-  ;; (setq elfeed-search-filter "+arxiv"))
-   (setq elfeed-search-filter "@1-day-ago +arxiv"))
+  ;; (setq elfeed-search-filter "+arxiv")
+  (setq elfeed-search-filter "@1-day-ago +arxiv")
+  (setq elfeed-feeds '(("http://localhost:8000/feed.xml" arxiv)))
+  (advice-add
+   'elfeed-show-refresh ; function to be advised
+   :before            ; advice runs first
+   'elfeed-record-opening ; advising function, this must have the same argument list as the main function, in this case all absorbed into a list "r"
+   '((name . "Record opening for spam filter"))) ; convenient name for identifying or removing this advice later
+  )
 
 (map! :leader :desc "Open Elfeed" :g "o x" '=rss)
+
+
 
 ;; (defun my/link-advice (oldbrowse link)
 ;;   (interactive)
@@ -888,9 +905,9 @@ concatenated."
     ;;   (insert (propertize entry-authors
     ;; 'face 'elfeed-search-feed-face) " "))
 
-    (when entry-authors
-      (insert (propertize feed-title
-			  'face 'elfeed-search-feed-face) " "))
+    ;; (when entry-authors
+    ;;   (insert (propertize feed-title
+    ;;     		  'face 'elfeed-search-feed-face) " "))
 
     ;; (when tags
     ;;   (insert "(" tags-str ")"))

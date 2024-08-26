@@ -61,16 +61,17 @@
 (package! helm-bibtex)
 (package! org-ref)
 ;; (package! org-latex-impatient)
-(package! ob-julia-vterm)
-;; (package! ob-julia-vterm :recipe
-;;   (:host github
-;;    :repo "shg/ob-julia-vterm.el"
-;;    :files ("*.el")))
+;; (package! ob-julia-vterm)
+(package! ob-julia-vterm :recipe
+  (:host github
+   :repo "stuartthomas25/ob-julia-vterm.el"
+   :branch "patch-2"
+   :files ("*.el")))
 (package! org-auto-tangle)
 (package! wolfram-mode)
 (package! ob-mathematica)
 ;; (package! ewal)
-(package! org-modern)
+(package! org-modern :pin "4afaa86c51b1f0b41c2a6ea8199befeb7c55eeb2")
 (package! org-inline-pdf)
 (package! org-roam-server)
 (package! julia-quail :recipe (:host github :repo "stuartthomas25/julia-quail"))

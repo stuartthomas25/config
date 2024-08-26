@@ -336,9 +336,7 @@ When searching, automatically place the match in the center
   (setq org-msg-signature "
 
 ,#+begin_signature
-Stuart Thomas (he/him) \\\\
-snthomas@umd.edu \\\\
-+1 (407) 701-7788
+Stuart Thomas (he/him)
 ,#+end_signature")
 
 

@@ -71,7 +71,10 @@ case $1 in
         fi
         ;;
     switch)
-        newproj=$(  $TOGGL_EXEC --no-header projects ls -f "name" |
+        newproj=$(  $TOGGL_EXEC --no-header projects ls -f "name,active" |
+
+                    grep -e "True" |
+                    sed -e 's/\s*True\s*$//g' |
                     sed -e 's/^ //g' |
                     zenity --list \
                         --height=600 \

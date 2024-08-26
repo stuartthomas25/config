@@ -101,7 +101,7 @@
        ;;pass              ; password manager for nerds
        pdf               ; pdf enhancements
        ;;prodigy           ; FIXME managing external services & code builders
-       rgb               ; creating color strings
+       ;; rgb               ; creating color strings
        ;;taskrunner        ; taskrunner for all your projects
        ;;terraform         ; infrastructure as code
        ;;tmux              ; an API for interacting with tmux
@@ -151,7 +151,7 @@
        ;;nix               ; I hereby declare "nix geht mehr!"
        ocaml             ; an objective camel
        (org +roam2 +pretty +dragndrop +jupyter)         ; organize your plain life in plain text
-       ;;php               ; perl's insecure younger brother
+       php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
        (python +conda +lsp)            ; beautiful is better than ugly

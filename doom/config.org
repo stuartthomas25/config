@@ -989,7 +989,7 @@ concatenated."
   (setq calibredb-root-dir "~/Textbooks")
   (setq calibredb-format-all-the-icons t)
   (setq calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir))
-  (setq calibredb-library-alist '(("~/Library")))
+  (setq calibredb-library-alist '(("~/Textbooks")))
   ;; (map! (:map calibredb-show-mode-map :desc "Open File" "RET" #'calibredb-find-file))
   (evil-set-initial-state 'calibre-search-mode 'motion))
   ;; (general-define-key :keymaps '(calibredb-search-mode-map calibredb-show-mode-map) "RET" 'calibredb-find-file)

@@ -989,6 +989,7 @@ concatenated."
   (setq calibredb-root-dir "~/Textbooks")
   (setq calibredb-format-all-the-icons t)
   (setq calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir))
+  (setq calibredb-search-page-max-rows 200)
   (setq calibredb-library-alist '(("~/Textbooks")))
   ;; (map! (:map calibredb-show-mode-map :desc "Open File" "RET" #'calibredb-find-file))
   (evil-set-initial-state 'calibre-search-mode 'motion))

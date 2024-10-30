@@ -7,7 +7,7 @@
 * Personal
 Some functionality uses this to identify you, e.g. GPG configuration, email clients, file templates and snippets.
 #+BEGIN_SRC emacs-lisp
-(setq user-full-name "Stuart Nathan Thomas"
+(setq user-full-name "Stuart Yi-Thomas"
       user-mail-address "snthomas@umd.edu")
 #+END_SRC
 
@@ -336,7 +336,7 @@ When searching, automatically place the match in the center
   (setq org-msg-signature "
 
 ,#+begin_signature
-Stuart Thomas (he/him)
+Stuart Yi-Thomas (he/him)
 ,#+end_signature")
 
 

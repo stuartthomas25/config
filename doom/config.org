@@ -15,6 +15,13 @@ Some functionality uses this to identify you, e.g. GPG configuration, email clie
 #+begin_src emacs-lisp
 ;; (setq recentf-exclude (append '("^/home/stuart/.emacs.d/.local/etc/bookmarks" "^/home/stuart/.emacs.d/.local/etc/workspaces/autosave") recentf-exclude))
 (setq recentf-exclude '("^/home/stuart/.emacs.d/.local/" "^/home/stuart/.emacs.d/.local/etc/workspaces/autosave" "^/home/stuart/.emacs.d/.local/cache"))
+
+(setq default-frame-alist
+      (append ;                        Note: if there are any conflicting settings in ‘default-frame-alist’, it is the one that comes first that gets applied.
+       '((undecorated . t)
+         (drag-internal-border . t)
+         (internal-border-width . 4))
+       default-frame-alist))
 #+end_src
 
 * PDFs

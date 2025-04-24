@@ -252,5 +252,5 @@ esac
 
 * OCaml
 #+begin_src zsh
-[[ ! -r /Users/stuart/.opam/opam-init/init.zsh ]] || source /Users/stuart/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
+[[ ! -r /home/stuart/.opam/opam-init/init.zsh ]] || source /home/stuart/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
 #+end_src

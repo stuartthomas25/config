@@ -200,7 +200,8 @@ When searching, automatically place the match in the center
         (setq org-startup-with-latex-preview  t)
         (setq org-startup-with-inline-images t)
         (setq org-image-actual-width '(0.9))
-        (plist-put org-format-latex-options :scale 1.5)
+        (plist-put org-format-latex-options :scale 3.0)
+        (plist-put org-format-latex-options :html-scale 3.0)
         (add-hook 'org-mode-hook #'org-modern-mode)
         (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
         ;; (add-hook 'org-mode-hook #'org-inline-pdf-mode)
@@ -212,6 +213,13 @@ When searching, automatically place the match in the center
   (org-latex-preview '(16)))
 (map! (:map org-mode-map :localleader :desc "Preview LaTeX in buffer" "L" #'org-latex-preview-buffer))
 (map! (:map org-mode-map :localleader :desc "Preview LaTeX at point" "j" #'org-latex-preview))
+
+(map! (:map org-mode-map :desc "Previous src block" :n "K" #'org-babel-previous-src-block))
+(map! (:map org-mode-map :desc "Next src block"     :n "J" #'org-babel-next-src-block))
+(map! (:after evil :map evil-motion-state-map "K" nil))
+(map! (:after evil :map evil-normal-state-map "K" nil))
+(map! (:after evil :map evil-visual-state-map "K" nil))
+(map! (:after evil :map evil-normal-state-map "J" nil))
 
 (map! (:map org-mode-map :localleader "@" :desc "Insert Org-Ref link" #'org-ref-insert-link))
 

@@ -70,6 +70,7 @@
 (package! org-auto-tangle)
 (package! wolfram-mode)
 (package! ob-mathematica)
+(package! ob-ipython)
 ;; (package! ewal)
 (package! org-modern :pin "4afaa86c51b1f0b41c2a6ea8199befeb7c55eeb2")
 (package! org-inline-pdf)

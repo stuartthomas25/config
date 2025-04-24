@@ -45,3 +45,6 @@ style = "Italic"
 [font.normal]
 family = "Fira Code"
 style = "Regular"
+
+[window]
+decorations = "None"

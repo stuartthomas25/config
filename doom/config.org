@@ -7,7 +7,7 @@
 * Personal
 Some functionality uses this to identify you, e.g. GPG configuration, email clients, file templates and snippets.
 #+BEGIN_SRC emacs-lisp
-(setq user-full-name "Stuart Nathan Thomas"
+(setq user-full-name "Stuart Yi-Thomas"
       user-mail-address "snthomas@umd.edu")
 #+END_SRC
 
@@ -343,7 +343,7 @@ When searching, automatically place the match in the center
   (setq org-msg-signature "
 
 ,#+begin_signature
-Stuart Thomas (he/him)
+Stuart Yi-Thomas (he/him)
 ,#+end_signature")
 
 
@@ -833,7 +833,7 @@ apps are not started from a shell."
 (after! elfeed
   ;; (setq elfeed-search-filter "+arxiv")
   (setq elfeed-search-filter "@1-day-ago +arxiv")
-  (setq elfeed-feeds '(("http://localhost:8000/feed.xml" arxiv)))
+  (setq elfeed-feeds '(("http://10.8.0.2:8000/feed.xml" arxiv)))
   (advice-add
    'elfeed-show-refresh ; function to be advised
    :before            ; advice runs first

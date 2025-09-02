@@ -38,6 +38,8 @@ import Data.Bits
 
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
+
+
 #+end_src
 
 The preferred terminal program, which is used in a binding below and by
@@ -144,7 +146,8 @@ myKeyBindings conf@(XConfig {XMonad.modMask = modm}) =
     , KeyBinding (modm .|. shiftMask)     xK_p           "Open Passwords"                                   $    passTypePrompt def
     , KeyBinding modm                     xK_f           "Rotate main monitor"                              $    spawn "/home/stuart/bin/flipscreen"
     , KeyBinding modm                     xK_s           "Sleep system"                                     $    spawn "systemctl suspend"
-    , KeyBinding (modm .|. shiftMask)     xK_s           "Sleep display"                                    $    spawn "sleep 1; xset dpms force off"
+    , KeyBinding (modm .|. shiftMask)     xK_s           "Sleep display"                                    $    spawn "sleep 1; xset dpms force off; ~/bin/mytoggl stop; ~/bin/wait_for_dpms_on && ~/bin/mytoggl start"
+    -- , KeyBinding (modm .|. shiftMask)     xK_s           "Sleep display"                                    $    spawn "notify-send test"
     , KeyBinding modm                     xK_o           "Reload xmodmap"                                   $    spawn "xmodmap ~/.Xmodmap && notify-send \"xmodmap loaded\" -t 1000"
     , KeyBinding modm                     xK_g           "toggl dark mode"                                  $    spawn "~/bin/togglcolor"
     , KeyBinding modm                     xK_q           "close focused window"                             $    kill
@@ -165,7 +168,7 @@ myKeyBindings conf@(XConfig {XMonad.modMask = modm}) =
     , KeyBinding modm                     xK_comma       "Increment number of master windows"               $    sendMessage (IncMasterN 1)
     , KeyBinding modm                     xK_period      "Deincrement number of master windows"             $    sendMessage (IncMasterN (-1))
  -- , KeyBinding modm                     xK_b           "Toggle the status bar gap"                        $    sendMessage ToggleStruts
-    , KeyBinding (modm .|. shiftMask)     xK_q           "Quit xmonad"                                      $    myExit
+    , KeyBinding (modm .|. shiftMask)     xK_q           "Quit xmonad"                                      $    (spawn "~/bin/mytoggl stop" >> myExit)
     , KeyBinding (modm .|. shiftMask)     xK_c           "Restart xmonad"                                   $    spawn "xmonad --recompile; xmonad --restart"
     , KeyBinding (modm .|. shiftMask)     xK_slash       "Display this help popup"                          $    spawn $ "notify-send --wait \"XMonad Help\" \"" ++ (help conf) ++ "\""
     , KeyBinding noModMask                xK_Print       "Foot Pedal Press"                                 $    spawn $ "~/bin/footpedal"
@@ -250,6 +253,7 @@ To match on the WM_NAME, you can use 'title' in the same way that
 myManageHook = composeAll
     [ className =? "MPlayer"        --> doFloat
     , className =? "Gimp"           --> doFloat
+    -- , className =? "run.py"           --> doFloat -- for JParty debugging
     , title     =? "Toggl Track"    --> doFloat
     , resource  =? "desktop_window" --> doIgnore
     , resource  =? "zenity" --> doFloat
@@ -290,6 +294,7 @@ myLogHook = return ()
 -- By default, do nothing.
 myStartupHook = do
     spawnOnce "nitrogen --restore &"
+    spawnOnce "~/bin/mytoggl start"
     spawn "dunst &"
     -- spawn "picom &"
     -- spawnOnce myEmacsServer

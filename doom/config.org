@@ -757,8 +757,8 @@ Capture and Arxiv open
 
 * Command Line
 #+BEGIN_SRC emacs-lisp
-(setq conda-env-home-directory "/opt/miniforge3")
-(setq conda-anaconda-home "/opt/miniforge3")
+(setq conda-env-home-directory "~/miniconda3")
+(setq conda-anaconda-home "~/miniconda3")
 
 (defun set-exec-path-from-shell-PATH ()
   "Set up Emacs' `exec-path' and PATH environment variable to match

@@ -287,7 +287,7 @@ When searching, automatically place the match in the center
             ;; (butlast msgs (- (length msgs) list-size))
             (butlast data (- (length data) list-size))
             list-size
-            'mail
+            nil
             "m"
             `(lambda (&rest _) (mu4e-view-message-with-message-id (plist-get ',el :message-id)))
             (format "%s" (snt/parse-msg el)))))
@@ -410,10 +410,11 @@ Stuart Yi-Thomas (he/him)
                 account-vars)
         (error "No email account found"))))
   (add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
-  (mu4e-update-mail-and-index t))
+  ;; (mu4e-update-mail-and-index t)
+  )
 
-(require 'mu4e)
-(mu4e--init-handlers) ;; not sure why I have to do this, otherwise Emacs throws an error every time it auto-updates until I open mu4e.
+;; (require 'mu4e)
+;; (mu4e--init-handlers) ;; not sure why I have to do this, otherwise Emacs throws an error every time it auto-updates until I open mu4e.
 #+END_SRC
 
 Show images by default
@@ -428,9 +429,18 @@ Disable Main Menu by going directly to inbox
 (remove-hook 'mu4e-main-mode-hook #'evil-collection-mu4e-update-main-view)
 (remove-hook 'mu4e-main-mode-hook #'+mu4e-init-h)
 
-(map! :leader :desc "Open Mu4e" :g "o m" '(lambda () (interactive) (mu4e t) (mu4e~headers-jump-to-maildir "/umd/INBOX")))
 (map! :desc "Quit Mu4e" :map mu4e-headers-mode-map :n "q" 'mu4e-view-quit)
 #+end_src
+
+#+begin_src emacs-lisp
+(map! :leader :desc "Open Mu4e" :g "o m" #'(lambda ()
+                                            (interactive)
+                                            (mu4e t)
+                                            (mu4e~headers-jump-to-maildir "/umd/INBOX")
+                                            (mu4e-view-refresh)
+                                            ))
+#+end_src
+
 
 * LaTeX
 #+BEGIN_SRC emacs-lisp

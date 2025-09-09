@@ -466,6 +466,7 @@ Disable Main Menu by going directly to inbox
 (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
 
 (setq TeX-arg-right-insert-p nil)
+(setq TeX-command-default "LaTeXMk")
 (setq TeX-electric-sub-and-superscript nil)
 #+END_SRC
 

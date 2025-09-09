@@ -67,6 +67,8 @@
    :repo "stuartthomas25/ob-julia-vterm.el"
    :branch "patch-2"
    :files ("*.el")))
+
+(package! ob-ipython)
 (package! org-auto-tangle)
 (package! wolfram-mode)
 (package! ob-mathematica)

@@ -204,6 +204,7 @@ When searching, automatically place the match in the center
         (plist-put org-format-latex-options :html-scale 3.0)
         (add-hook 'org-mode-hook #'org-modern-mode)
         (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
+        (setq tab-width 4)
         ;; (add-hook 'org-mode-hook #'org-inline-pdf-mode)
         )
 
@@ -214,7 +215,14 @@ When searching, automatically place the match in the center
 (map! (:map org-mode-map :localleader :desc "Preview LaTeX in buffer" "L" #'org-latex-preview-buffer))
 (map! (:map org-mode-map :localleader :desc "Preview LaTeX at point" "j" #'org-latex-preview))
 
-(map! (:map org-mode-map :desc "Previous src block" :n "K" #'org-babel-previous-src-block))
+
+(defun org-babel-goto-src-block-head-or-previous ()
+  (interactive)
+  (if (= (point) (org-babel-where-is-src-block-head))
+      (org-babel-previous-src-block)
+      (org-babel-goto-src-block-head))
+  )
+(map! (:map org-mode-map :desc "Previous src block" :n "K" #'org-babel-goto-src-block-head-or-previous))
 (map! (:map org-mode-map :desc "Next src block"     :n "J" #'org-babel-next-src-block))
 (map! (:after evil :map evil-motion-state-map "K" nil))
 (map! (:after evil :map evil-normal-state-map "K" nil))
@@ -287,7 +295,7 @@ When searching, automatically place the match in the center
             ;; (butlast msgs (- (length msgs) list-size))
             (butlast data (- (length data) list-size))
             list-size
-            nil ;; 'mail
+            nil
             "m"
             `(lambda (&rest _) (mu4e-view-message-with-message-id (plist-get ',el :message-id)))
             (format "%s" (snt/parse-msg el)))))
@@ -410,10 +418,11 @@ Stuart Yi-Thomas (he/him)
                 account-vars)
         (error "No email account found"))))
   (add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
-  (mu4e-update-mail-and-index t))
+  ;; (mu4e-update-mail-and-index t)
+  )
 
-(require 'mu4e)
-(mu4e--init-handlers) ;; not sure why I have to do this, otherwise Emacs throws an error every time it auto-updates until I open mu4e.
+;; (require 'mu4e)
+;; (mu4e--init-handlers) ;; not sure why I have to do this, otherwise Emacs throws an error every time it auto-updates until I open mu4e.
 #+END_SRC
 
 Show images by default
@@ -428,9 +437,18 @@ Disable Main Menu by going directly to inbox
 (remove-hook 'mu4e-main-mode-hook #'evil-collection-mu4e-update-main-view)
 (remove-hook 'mu4e-main-mode-hook #'+mu4e-init-h)
 
-(map! :leader :desc "Open Mu4e" :g "o m" '(lambda () (interactive) (mu4e t) (mu4e~headers-jump-to-maildir "/umd/INBOX")))
 (map! :desc "Quit Mu4e" :map mu4e-headers-mode-map :n "q" 'mu4e-view-quit)
 #+end_src
+
+#+begin_src emacs-lisp
+(map! :leader :desc "Open Mu4e" :g "o m" #'(lambda ()
+                                            (interactive)
+                                            (mu4e t)
+                                            (mu4e~headers-jump-to-maildir "/umd/INBOX")
+                                            (mu4e-view-refresh)
+                                            ))
+#+end_src
+
 
 * LaTeX
 #+BEGIN_SRC emacs-lisp
@@ -466,6 +484,7 @@ Disable Main Menu by going directly to inbox
 (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
 
 (setq TeX-arg-right-insert-p nil)
+(setq TeX-command-default "LaTeXMk")
 (setq TeX-electric-sub-and-superscript nil)
 #+END_SRC
 
@@ -540,11 +559,13 @@ Auto import
 (defconst project-bib-org-file "bib.org")
 (defconst project-references-directory "references")
 (defun get-citation-from-doi (doi)
-   (shell-command-to-string (concat "doi -nd " doi)))
+   (shell-command-to-string (concat "doi -nd \"" doi "\"")))
 
-(defun save-pdf-to-bib (pdf-path)
+(defun save-pdf-to-bib ()
+  (interactive)
   (clear-minibuffer-message)
    (let* (
+    (pdf-path (buffer-file-name))
     (project (projectile-acquire-root))
     (doi (doi-of-pdf pdf-path))
     (citation (get-citation-from-doi doi))
@@ -558,19 +579,26 @@ Auto import
      (goto-char (point-max))
      (insert insert-text)
      ;; ( append-to-file insert-text nil  )
-     (rename-file pdf-path)))
-#+end_src
+     (rename-file pdf-path new-pdf-path)))
 
-#+begin_src emacs-lisp
 
-(let ((citation (get-citation-from-doi "10.1103/physrevb.108.155404")))
-  (string-match "@\\(\\w*\\){\\(.*\\),\n" citation)
-)
+;;; DOESNT WORK
+(set-file-template! "bib.org" :when (lambda (fname)
+                                        (insert (format """
+:PROPERTIES:
+:header-args: :tangle bib.bib :tangle bib.bib :results silent
+:END:
+,#+title: %s Bibliography
+,#+STARTUP: fold
+,#+auto_tangle: t
+---
+""")))
+                                :project t)
 #+end_src
 
 * DOI System
 #+BEGIN_SRC emacs-lisp
-(defconst doi-regex "10\\.[0-9]\\{4,5\\}\\/[^;, {}\"]+")
+(defconst doi-regex "10\\.[0-9]\\{4,5\\}\\/[^\]\[;, {}\"]+")
 (defconst arxiv-code-regex "arxiv[:.]\\([0-9]\\{4\\}\\.[0-9]\\{4,5\\}\\(v[0-9]+\\)*\\)$")
 (defconst arxiv-old-code-regex "arxiv[:.]\\([-a-z]+\\/[0-9]\\{7\\}\\(v[0-9]+\\)*\\)$")
 (defconst arxiv-link-regex "arxiv\\.org\\/\\(abs\\|pdf\\)\\/\\([0-9]\\{4,5\\}\\.[0-9]\\{5\\}\\(v[0-9]+\\)*\\)")
@@ -589,21 +617,12 @@ Auto import
   (let ((line (thing-at-point 'line t))
         (is-bibtex-block-p (string-equal (car (org-babel-get-src-block-info)) "bibtex")))
     (cond
-
-    ;; ((string-match arxiv-code-regex line)
-    ;; (let ((doi (match-string 0 line)))
-    ;;   (kill-whole-line)
-    ;;   (unless is-bibtex-block-p
-    ;;     (insert "#+begin_src bibtex\n\n#+end_src")
-    ;;     (previous-line))
-    ;;   (biblio-doi-insert-bibtex doi)))
-
-
-    ((string-match arxiv-code-regex line) (my/insert-doi (format "10.48550/arXiv.%s" (match-string 1 line))))
-    ((string-match arxiv-old-code-regex line) (my/insert-doi (format "10.48550/arXiv.%s" (match-string 1 line))))
-    ((string-match arxiv-link-regex line) (my/insert-doi (format "10.48550/arXiv.%s" (match-string 2 line))))
-    ((string-match arxiv-old-link-regex line) (my/insert-doi (format "10.48550/arXiv.%s" (match-string 2 line))))
-    ((string-match doi-regex line) (my/insert-doi (match-string 0 line))))))
+        ((string-match arxiv-code-regex line) (my/insert-doi (format "10.48550/arXiv.%s" (match-string 1 line))))
+        ((string-match arxiv-old-code-regex line) (my/insert-doi (format "10.48550/arXiv.%s" (match-string 1 line))))
+        ((string-match arxiv-link-regex line) (my/insert-doi (format "10.48550/arXiv.%s" (match-string 2 line))))
+        ((string-match arxiv-old-link-regex line) (my/insert-doi (format "10.48550/arXiv.%s" (match-string 2 line))))
+        ((string-match doi-regex line) (my/insert-doi (match-string 0 line)))
+        (t (message "Can't find DOI")))))
 
 (map! (:map bibtex-mode-map :localleader "D" :desc "Replace DOI in line with Bibtex reference" #'my/doi-to-reference))
 (map! (:map org-mode-map :localleader "D" :desc "Replace DOI in line with Bibtex reference" #'my/doi-to-reference))
@@ -655,9 +674,12 @@ STATUS: the status"
     ((string-match "https:\\/\\/api.elsevier.com\\/content\\/article\\/PII:\\(S[0-9]+\\)" url) (format "https://www.sciencedirect.com/science/article/pii/%s/pdfft" (match-string 1 url)))
     (t url)))
 
+
 (defun open-doi (doi &optional fname)
   (interactive "sDOI: ")
   (message "Opening DOI: %s" doi)
+  ;; Try SciHub
+
   (url-retrieve (url-encode-url (change-url (format "http://api.crossref.org/v1/works/%s\n" doi))) 'callback (list fname) t t))
 
 (defun open-arxiv (arxivid &optional fname)
@@ -665,6 +687,27 @@ STATUS: the status"
   (message "Opening ArXiv article: %s" arxivid)
   (display-pdf (format "https://arxiv.org/pdf/%s.pdf" arxivid) fname))
 
+;; (defun open-link (uri &optional fname default-open-function)
+;;   "Open a doi link.
+;;  URI: the uri"
+;;   (interactive "sURI: ")
+;;   (message "Opening link: %s" uri)
+;;   (unless default-open-function (setq default-open-function #'browse-url-default-browser))
+;;   (cond
+;;         ((string-match arxiv-code-regex uri) (open-arxiv (match-string 1 uri) fname)) ;; new style, DOI
+;;         ((string-match arxiv-old-code-regex uri) (open-arxiv (match-string 1 uri) fname)) ;; old style, DOI
+;;         ((string-match arxiv-link-regex uri) (open-arxiv (match-string 2 uri) fname)) ;; new style, url
+;;         ((string-match arxiv-old-link-regex uri) (open-arxiv (match-string 2 uri) fname)) ;; old style, url
+;;         ((string-match doi-regex uri) (open-doi (match-string 0 uri) fname))
+;;         ( t (funcall default-open-function uri))))
+
+(defun my/open-doi (doi &optional fname)
+  (message "my/open-doi: Opening link: %s" uri)
+  (let ((filename (if fname fname (make-temp-file "stumacs" nil ".pdf"))))
+    ;;(shell-command-to-string (concat "doi2pdf " doi " " fname))))
+    (shell-command-to-string (format "doi2pdf \"%s\" \"%s\"" doi filename))
+    (find-file filename)
+    ))
 
 (defun open-link (uri &optional fname default-open-function)
   "Open a doi link.
@@ -673,11 +716,11 @@ STATUS: the status"
   (message "Opening link: %s" uri)
   (unless default-open-function (setq default-open-function #'browse-url-default-browser))
   (cond
-        ((string-match arxiv-code-regex uri) (open-arxiv (match-string 1 uri) fname)) ;; new style, DOI
-        ((string-match arxiv-old-code-regex uri) (open-arxiv (match-string 1 uri) fname)) ;; old style, DOI
-        ((string-match arxiv-link-regex uri) (open-arxiv (match-string 2 uri) fname)) ;; new style, url
-        ((string-match arxiv-old-link-regex uri) (open-arxiv (match-string 2 uri) fname)) ;; old style, url
-        ((string-match doi-regex uri) (open-doi (match-string 0 uri) fname))
+        ((string-match arxiv-code-regex uri) (my/open-doi (match-string 1 uri) fname)) ;; new style, DOI
+        ((string-match arxiv-old-code-regex uri) (my/open-doi (match-string 1 uri) fname)) ;; old style, DOI
+        ((string-match arxiv-link-regex uri) (my/open-doi (match-string 2 uri) fname)) ;; new style, url
+        ((string-match arxiv-old-link-regex uri) (my/open-doi (match-string 2 uri) fname)) ;; old style, url
+        ((string-match doi-regex uri) (my/open-doi (match-string 0 uri) fname))
         ( t (funcall default-open-function uri))))
 
 (setq pdf-links-browse-uri-function 'open-link)
@@ -698,6 +741,7 @@ Capture and Arxiv open
 
 (defun doi-of-pdf (filename)
     (let* ((res (shell-command-to-string (concat "pdf2doi " filename))))
+        (when (string-equal (nth 0 (string-split res " " t)) "Error:") (error (concat "pdf2doi returned error:\n" res)))
         (nth 1 (string-split res " " t))))
 
 
@@ -731,8 +775,8 @@ Capture and Arxiv open
 
 * Command Line
 #+BEGIN_SRC emacs-lisp
-(setq conda-env-home-directory "/opt/miniforge3")
-(setq conda-anaconda-home "/opt/miniforge3")
+(setq conda-env-home-directory "~/miniconda3")
+(setq conda-anaconda-home "~/miniconda3")
 
 (defun set-exec-path-from-shell-PATH ()
   "Set up Emacs' `exec-path' and PATH environment variable to match
@@ -796,8 +840,13 @@ apps are not started from a shell."
     (defalias 'org-babel-execute:julia 'org-babel-execute:julia-vterm))
 
 (defun org-babel-execute:bibtex (BODY PARAMS)
-  (open-link BODY)
-  nil)
+  (let*
+   ((key (progn (string-match "{\\(.+\\)," BODY) (match-string 1 BODY)))
+    (root (projectile-acquire-root))
+    (fname (format "%sreferences/%s.pdf" root key)))
+   (if (file-exists-p fname)
+       (find-file fname)
+       (open-link BODY fname)))) ;; find the first link and open it
 
 
 ;; (defun my/ob-julia-callback (arg)

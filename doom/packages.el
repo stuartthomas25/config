@@ -61,19 +61,14 @@
 (package! helm-bibtex)
 (package! org-ref)
 ;; (package! org-latex-impatient)
-;; (package! ob-julia-vterm :recipe
-;;   (:host github
-;;    :repo "shg/ob-julia-vterm.el"
-;;    :branch "master"
-;;    :files ("*.el")))
-;; (package! ob-julia-vterm :recipe
-;;   (:host github
-;;    :repo "stuartthomas25/ob-julia-vterm.el"
-;;    :branch "truncated-errors"
-;;    :files ("*.el")))
-(package! ob-julia-vterm
-  :recipe (:local-repo "~/src/ob-julia-vterm.el"
-           :build (:not compile)))
+;; (package! ob-julia-vterm)
+(package! ob-julia-vterm :recipe
+  (:host github
+   :repo "stuartthomas25/ob-julia-vterm.el"
+   :branch "patch-2"
+   :files ("*.el")))
+
+(package! ob-ipython)
 (package! org-auto-tangle)
 ;(package! wolfram-mode)
 ;(package! ob-mathematica)

@@ -52,6 +52,7 @@
        ;;window-select     ; visually switch windows
        workspaces        ; tab emulation, persistence & separate workspaces
        ;;zen               ; distraction-free coding or writing
+       smooth-scroll
 
        :editor
        (evil +everywhere); come to the dark side, we have cookies
@@ -179,7 +180,7 @@
        ;;(wanderlust +gmail)
 
        :app
-       calendar
+       ; calendar
        ;;emms
        ;;everywhere        ; *leave* Emacs!? You must be joking
        ;;irc               ; how neckbeards socialize

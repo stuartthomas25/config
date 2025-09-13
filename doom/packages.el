@@ -61,25 +61,32 @@
 (package! helm-bibtex)
 (package! org-ref)
 ;; (package! org-latex-impatient)
-;; (package! ob-julia-vterm)
-(package! ob-julia-vterm :recipe
-  (:host github
-   :repo "stuartthomas25/ob-julia-vterm.el"
-   :branch "patch-2"
-   :files ("*.el")))
+;; (package! ob-julia-vterm :recipe
+;;   (:host github
+;;    :repo "shg/ob-julia-vterm.el"
+;;    :branch "master"
+;;    :files ("*.el")))
+;; (package! ob-julia-vterm :recipe
+;;   (:host github
+;;    :repo "stuartthomas25/ob-julia-vterm.el"
+;;    :branch "truncated-errors"
+;;    :files ("*.el")))
+(package! ob-julia-vterm
+  :recipe (:local-repo "~/src/ob-julia-vterm.el"
+           :build (:not compile)))
 (package! org-auto-tangle)
-(package! wolfram-mode)
-(package! ob-mathematica)
-(package! ob-ipython)
+;(package! wolfram-mode)
+;(package! ob-mathematica)
+;(package! ob-ipython)
 ;; (package! ewal)
 (package! org-modern :pin "4afaa86c51b1f0b41c2a6ea8199befeb7c55eeb2")
 (package! org-inline-pdf)
-(package! org-roam-server)
+;(package! org-roam-server)
 (package! julia-quail :recipe (:host github :repo "stuartthomas25/julia-quail"))
 (package! polymode)
 (package! arxiv-mode)
 (package! calibredb)
-(package! slurm-mode)
+;(package! slurm-mode)
 (package! lean4-mode :recipe
   (:host github
    :repo "leanprover/lean4-mode"

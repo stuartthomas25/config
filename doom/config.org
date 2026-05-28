@@ -198,6 +198,7 @@ When searching, automatically place the match in the center
         (setq org-startup-indented t)
         (setq org-agenda-files '("~/org/journal.org"))
         (setq org-startup-with-latex-preview  t)
+        (push "/home/stuart/Projects" safe-local-variable-directories)
         (setq org-startup-with-inline-images t)
         (setq org-image-actual-width '(0.9))
         (plist-put org-format-latex-options :scale 2.0)
@@ -702,7 +703,7 @@ STATUS: the status"
 ;;         ( t (funcall default-open-function uri))))
 
 (defun my/open-doi (doi &optional fname)
-  (message "my/open-doi: Opening link: %s" uri)
+  (message "my/open-doi: Opening link: %s" doi)
   (let ((filename (if fname fname (make-temp-file "stumacs" nil ".pdf"))))
     ;;(shell-command-to-string (concat "doi2pdf " doi " " fname))))
     (shell-command-to-string (format "doi2pdf \"%s\" \"%s\"" doi filename))
@@ -799,16 +800,16 @@ apps are not started from a shell."
 ** Julia REPL
 #+BEGIN_SRC emacs-lisp
 ;; https://emacs.stackexchange.com/questions/18775/how-to-get-a-fully-functional-julia-repl-in-emacs
-(defun my/julia-repl ()
-  "Runs Julia in a screen session in a `term' buffer."
-  (interactive)
-  (require 'term)
-  ;; (let ((termbuf (apply 'make-term "Julia REPL" "screen" nil (split-string-and-unquote "arch -x86_64 /usr/local/bin/julia"))))
-  (let ((termbuf (apply 'make-term "Julia REPL" "screen" nil (split-string-and-unquote "/Applications/Julia-1.8.app/Contents/Resources/julia/bin/julia --sysimage /Users/stuart/.julia/sysimages/sys_itensors.so"))))
-    (set-buffer termbuf)
-    (term-mode)
-    (term-char-mode)
-    (switch-to-buffer termbuf)))
+;; (defun my/julia-repl ()
+;;   "Runs Julia in a screen session in a `term' buffer."
+;;   (interactive)
+;;   (require 'term)
+;;   ;; (let ((termbuf (apply 'make-term "Julia REPL" "screen" nil (split-string-and-unquote "arch -x86_64 /usr/local/bin/julia"))))
+;;   (let ((termbuf (apply 'make-term "Julia REPL" "screen" nil (split-string-and-unquote "/Applications/Julia-1.8.app/Contents/Resources/julia/bin/julia --sysimage /Users/stuart/.julia/sysimages/sys_itensors.so"))))
+;;     (set-buffer termbuf)
+;;     (term-mode)
+;;     (term-char-mode)
+;;     (switch-to-buffer termbuf)))
 
 (setq term-escape-char [24])
 

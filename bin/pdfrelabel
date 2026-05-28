@@ -8,13 +8,15 @@ fi
 
 tmppath=$(mktemp)
 
+newpage="1"
+
 echo "PageLabelBegin
-PageLabelNewIndex: 1
-PageLabelStart: 1
+PageLabelNewIndex: $newpage
+PageLabelStart: $newpage
 PageLabelNumStyle: LowercaseRomanNumerals
 PageLabelBegin
 PageLabelNewIndex: $1
-PageLabelStart: 1
+PageLabelStart: $newpage
 PageLabelNumStyle: DecimalArabicNumerals" > $tmppath
 
 pdftk "$2" update_info $tmppath output "$2.new"

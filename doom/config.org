@@ -219,10 +219,11 @@ When searching, automatically place the match in the center
 
 (defun org-babel-goto-src-block-head-or-previous ()
   (interactive)
-  (if (= (point) (org-babel-where-is-src-block-head))
-      (org-babel-previous-src-block)
-      (org-babel-goto-src-block-head))
-  )
+  (let ((head (org-babel-where-is-src-block-head)))
+    (if (or (not head) (= (point) head))
+        (org-babel-previous-src-block)
+        (org-babel-goto-src-block-head))))
+
 (map! (:map org-mode-map :desc "Previous src block" :n "K" #'org-babel-goto-src-block-head-or-previous))
 (map! (:map org-mode-map :desc "Next src block"     :n "J" #'org-babel-next-src-block))
 (map! (:after evil :map evil-motion-state-map "K" nil))
@@ -264,12 +265,6 @@ When searching, automatically place the match in the center
 (add-hook 'org-babel-post-tangle-hook #'snt/add-header)
 #+END_SRC
 
-** Babel
-#+begin_src elisp
-(setq org-babel-julia-command "julia --sysimage ~/.julia/sysimages/sys_itensors.so")
-
-
-#+end_src
 
 * Dashboard
 #+BEGIN_SRC emacs-lisp
@@ -800,16 +795,17 @@ apps are not started from a shell."
 ** Julia REPL
 #+BEGIN_SRC emacs-lisp
 ;; https://emacs.stackexchange.com/questions/18775/how-to-get-a-fully-functional-julia-repl-in-emacs
-;; (defun my/julia-repl ()
-;;   "Runs Julia in a screen session in a `term' buffer."
-;;   (interactive)
-;;   (require 'term)
-;;   ;; (let ((termbuf (apply 'make-term "Julia REPL" "screen" nil (split-string-and-unquote "arch -x86_64 /usr/local/bin/julia"))))
-;;   (let ((termbuf (apply 'make-term "Julia REPL" "screen" nil (split-string-and-unquote "/Applications/Julia-1.8.app/Contents/Resources/julia/bin/julia --sysimage /Users/stuart/.julia/sysimages/sys_itensors.so"))))
-;;     (set-buffer termbuf)
-;;     (term-mode)
-;;     (term-char-mode)
-;;     (switch-to-buffer termbuf)))
+(setq julia-vterm-repl-program "~/.juliaup/bin/julia")
+(defun my/julia-repl ()
+  "Runs Julia in a screen session in a `term' buffer."
+  (interactive)
+  (require 'term)
+  ;; (let ((termbuf (apply 'make-term "Julia REPL" "screen" nil (split-string-and-unquote "arch -x86_64 /usr/local/bin/julia"))))
+  (let ((termbuf (apply 'make-term "Julia REPL" "screen" nil (split-string-and-unquote "/Applications/Julia-1.8.app/Contents/Resources/julia/bin/julia --sysimage /Users/stuart/.julia/sysimages/sys_itensors.so"))))
+    (set-buffer termbuf)
+    (term-mode)
+    (term-char-mode)
+    (switch-to-buffer termbuf)))
 
 (setq term-escape-char [24])
 

@@ -174,7 +174,7 @@ When searching, automatically place the match in the center
 
 * Custom Keyboard Maps
 #+BEGIN_SRC emacs-lisp
-(map! :leader :desc "Open Terminal" :g "j" #'multi-term)
+(map! :leader :desc "Open Terminal" :g "j" #'vterm)
 (map! :leader :desc "Open eshell" :g "e" 'eshell)
 (global-unset-key [remap delete-frame])
 (map! :leader :desc "Close Frame" :r "q f" #'delete-frame)
@@ -602,7 +602,7 @@ Auto import
 
 (defun my/insert-doi (doi)
       (kill-whole-line)
-      (unless is-bibtex-block-p
+      (when needs-bibtex-block-p
         (insert "#+begin_src bibtex\n\n#+end_src")
         (previous-line))
       (biblio-doi-insert-bibtex doi))
@@ -610,7 +610,8 @@ Auto import
 (defun my/doi-to-reference ()
   (interactive)
   (let ((line (thing-at-point 'line t))
-        (is-bibtex-block-p (string-equal (car (org-babel-get-src-block-info)) "bibtex")))
+        (needs-bibtex-block-p (and (eq major-mode 'org-mode)
+                               (not (string-equal (car (org-babel-get-src-block-info)) "bibtex")))))
     (cond
         ((string-match arxiv-code-regex line) (my/insert-doi (format "10.48550/arXiv.%s" (match-string 1 line))))
         ((string-match arxiv-old-code-regex line) (my/insert-doi (format "10.48550/arXiv.%s" (match-string 1 line))))
@@ -697,10 +698,11 @@ STATUS: the status"
 ;;         ( t (funcall default-open-function uri))))
 
 (defun my/open-doi (doi &optional fname)
-  (message "my/open-doi: Opening link: %s" uri)
   (let ((filename (if fname fname (make-temp-file "stumacs" nil ".pdf"))))
+    (message "my/open-doi: Opening link: %s in file %s" uri filename)
     ;;(shell-command-to-string (concat "doi2pdf " doi " " fname))))
-    (shell-command-to-string (format "doi2pdf \"%s\" \"%s\"" doi filename))
+    ;; (message (format "~/bin/doi2pdf \"%s\" \"%s\"" doi filename))
+    (message (shell-command-to-string (format "~/bin/doi2pdf \"%s\" \"%s\"" doi filename)))
     (find-file filename)
     ))
 
@@ -721,7 +723,11 @@ STATUS: the status"
 (setq pdf-links-browse-uri-function 'open-link)
 (url-handler-mode 1)
 
-(setq browse-url-browser-function #'open-link)
+;; (setq browse-url-browser-function #'open-link)
+(setq browse-url-browser-function #'browse-url-default-browser)
+(setq pdf-links-browse-uri-function 'pdf-links-browse-uri-default)
+
+
 #+END_SRC
 
 Capture and Arxiv open
@@ -1024,11 +1030,11 @@ concatenated."
       (insert (propertize "(empty)\n" 'face 'italic)))
     (goto-char (point-min))))
 
-(require 'elfeed-goodies)
-(after! elfeed-goodies
-        (setq elfeed-search-print-entry-function #'my/elfeed-search-print-fn)
-        (setq elfeed-search-header-function #'my/elfeed-search-header)
-        (setq elfeed-show-refresh-function #'my/elfeed-show-refresh))
+;; (require 'elfeed-goodies)
+;; (after! elfeed-goodies
+;;         (setq elfeed-search-print-entry-function #'my/elfeed-search-print-fn)
+;;         (setq elfeed-search-header-function #'my/elfeed-search-header)
+;;         (setq elfeed-show-refresh-function #'my/elfeed-show-refresh))
 #+END_SRC
 
 * Projectile

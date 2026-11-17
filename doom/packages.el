@@ -86,3 +86,8 @@
   (:host github
    :repo "leanprover/lean4-mode"
    :files ("*.el" "data")))
+
+(package! let-completion
+  :recipe (:host github :repo "gggion/let-completion.el"))
+
+(package! hide-mode-line)

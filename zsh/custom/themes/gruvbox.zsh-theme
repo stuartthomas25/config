@@ -93,6 +93,8 @@ prompt_context() {
   # fi
   case "$(hostname)" in
      Sarabi*)  OS_LOGO="🦁 " ;;
+     tevye*)  OS_LOGO="🎻 " ;;
+     yithomas.com*)  OS_LOGO="⚛️ " ;;
      mufasa*)  OS_LOGO="🦁 " ;;
      roxie*)   OS_LOGO="🐧" ;;
      millie*)   OS_LOGO="🧑" ;;

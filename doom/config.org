@@ -85,7 +85,7 @@ Some functionality uses this to identify you, e.g. GPG configuration, email clie
 
 
 (add-hook 'doom-switch-buffer-hook #'hide-mode-line-mode)
-;; (global-hide-mode-line-mode -1)
+(global-hide-mode-line-mode -1)
 (map! :leader :desc "Toggle Doom Mode Line" :g "d" (lambda () (interactive) (global-hide-mode-line-mode 'toggle)))
 #+END_SRC
 
@@ -198,10 +198,11 @@ When searching, automatically place the match in the center
         (setq org-startup-indented t)
         (setq org-agenda-files '("~/org/journal.org"))
         (setq org-startup-with-latex-preview  t)
+        (push "/home/stuart/Projects" safe-local-variable-directories)
         (setq org-startup-with-inline-images t)
         (setq org-image-actual-width '(0.9))
-        (plist-put org-format-latex-options :scale 3.0)
-        (plist-put org-format-latex-options :html-scale 3.0)
+        (plist-put org-format-latex-options :scale 2.0)
+        (plist-put org-format-latex-options :html-scale  2.0)
         (add-hook 'org-mode-hook #'org-modern-mode)
         (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
         (setq tab-width 4)
@@ -697,14 +698,14 @@ STATUS: the status"
 ;;         ((string-match doi-regex uri) (open-doi (match-string 0 uri) fname))
 ;;         ( t (funcall default-open-function uri))))
 
+(add-to-list 'exec-path (expand-file-name "~/bin") t)
 (defun my/open-doi (doi &optional fname)
+  (message "my/open-doi: Opening link: %s" doi)
   (let ((filename (if fname fname (make-temp-file "stumacs" nil ".pdf"))))
-    (message "my/open-doi: Opening link: %s in file %s" uri filename)
-    ;;(shell-command-to-string (concat "doi2pdf " doi " " fname))))
-    ;; (message (format "~/bin/doi2pdf \"%s\" \"%s\"" doi filename))
-    (message (shell-command-to-string (format "~/bin/doi2pdf \"%s\" \"%s\"" doi filename)))
+    (call-process "doi2pdf" nil nil nil doi filename)
     (find-file filename)
     ))
+
 
 (defun open-link (uri &optional fname default-open-function)
   "Open a doi link.
@@ -865,6 +866,19 @@ apps are not started from a shell."
 ;; (add-to-list window-buffer-change-functions 'my/ob-julia-callback)
 ;; (setq window-buffer-change-functions '(my/ob-julia-callback doom-run-switch-buffer-hooks-h))
 ;;
+
+
+(defun my/import-graphical-env ()
+  (interactive)
+  (let ((vars '("DISPLAY" "WAYLAND_DISPLAY" "XAUTHORITY"
+                "DBUS_SESSION_BUS_ADDRESS")))
+    (dolist (line (process-lines "systemctl" "--user" "show-environment"))
+      (when (string-match "\\`\\([^=]+\\)=\\(.*\\)\\'" line)
+        (let ((name (match-string 1 line))
+              (value (match-string 2 line)))
+          (when (member name vars)
+            (setenv name value)))))
+    (message "DISPLAY=%s" (or (getenv "DISPLAY") "(unset)"))))
 
 #+END_SRC
 

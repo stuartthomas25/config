@@ -480,8 +480,28 @@ Disable Main Menu by going directly to inbox
 (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
 
 (setq TeX-arg-right-insert-p nil)
-(setq TeX-command-default "LaTeXMk")
+(setq-hook! 'LaTeX-mode-hook
+  TeX-command-default "LaTeXMk")
 (setq TeX-electric-sub-and-superscript nil)
+
+(after! tex-fold
+  (add-to-list 'TeX-fold-macro-spec-list
+               '((TeX-fold-cite-display . (2 . 1)) ("onlinecite")))
+  (defun snt/tex-fold-cite-key (key)
+    "Use the BibTeX KEY in folded citations."
+    key)
+  (advice-add 'TeX-fold--bib-abbrev :override #'snt/tex-fold-cite-key))
+
+(after! company-reftex
+  (setq company-reftex-citations-regexp
+        (concat company-reftex-citations-regexp
+                "\\|\\\\onlinecite\\(?:\\[[^]]*\\]\\)*{\\(?:[^},]*,\\)*\\(?1:[^},]*\\)")))
+
+;; make sure company citations load
+(setq-hook! 'LaTeX-mode-hook
+  +lsp-company-backends
+  '(company-reftex-citations company-reftex-labels
+    :separate company-capf company-yasnippet))
 #+END_SRC
 
 Make sure PDF Tools is the first viewing option on the list
